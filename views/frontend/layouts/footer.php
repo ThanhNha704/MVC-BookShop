@@ -1,45 +1,13 @@
-<div>
-    <div class="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 text-sm">
-        <div>
-            <img src="<?= $assets['logo_icon'] ?>" alt="logo" class="h-20">
-            <p class="w-full md:w-2/3 text-gray-500 text-left mt-3">
-                Khám phá những xu hướng thời trang mới nhất, mang đến vẻ đẹp tự tin và cá tính cho bạn mỗi ngày.
-            </p>
-        </div>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <div>
-            <p class="text-xl font-medium mb-5">CÔNG TY</p>
-            <ul class="flex flex-col gap-1 text-gray-600">
-                <li>TRANG CHỦ</li>
-                <li>VỀ CHÚNG TÔI</li>
-                <li>LIÊN HỆ</li>
-                <li>SẢN PHẨM</li>
-                <li>VẬN CHUYỂN</li>
-            </ul>
-        </div>
 
-        <div>
-            <p class="text-xl font-medium mb-5">LIÊN HỆ</p>
-            <ul class="flex flex-col gap-1 text-gray-600">
-                <li>+1 234 567 890</li>
-                <li>info@example.com</li>
-                <li>TP HCM</li>
-            </ul>
-        </div>
-    </div>
-
-    <div>
-        <hr />
-        <p class="py-5 text-sm text-center">
-            © 2023 Your Company. All rights reserved.
-        </p>
-    </div>
-</div>
-
-</div>
-</div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="<?= BASE_URL ?>public/assets/js/cart.js" defer></script>
-</body>
-
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <h1 class="text-red-500">FOOTER NAM O DAY</h1>
+  </body>
 </html>
