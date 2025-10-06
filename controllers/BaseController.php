@@ -17,10 +17,19 @@ class BaseController
         }
     }
 
-    protected function set($key, $value)
+    // Phương thức để nạp Model
+    protected function loadModel($modelName)
     {
-        $this->data[$key] = $value;
+        $modelPath = './models/' . $modelName . '.php';
+        if (file_exists($modelPath)) {
+            include $modelPath;
+            $this->model = new $modelName();
+        } else {
+            die("Model file '{$modelPath}' not found.");
+        }
     }
+
+    // Phương thức để nạp View
     protected function view($viewPath)
     {
         $this->render($viewPath);

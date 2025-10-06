@@ -48,12 +48,12 @@
 
                     <!-- Nếu chưa đăng nhập -->
                     <div class="login flex">
-                        <a href="index.php?controllers=auth&action=register"
+                        <a href="index.php?controller=authen&action=login"
                             class="flex items-center text-black text-decoration-none">
                             <p class="hidden md:block cursor-pointer m-0 px-2 border-r-1">Đăng nhập</p>
                         </a>
 
-                        <a href="index.php?controllers=auth&action=register"
+                        <a href="index.php?controller=authen&action=register"
                             class="flex items-center text-black text-decoration-none">
                             <p class="hidden md:block cursor-pointer m-0 p-2">Đăng ký</p>
                         </a>
@@ -79,11 +79,11 @@
                     <img src="<?= $assets['menu_icon'] ?>" alt="menu" class="w-8">
                     <p class="text-black font-normal m-0 pl-2 hidden md:block">DANH MỤC SẢN PHẨM</p>
 
-                    <div class="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded-lg z-50">
+                    <div class="absolute top-full left-16 hidden group-hover:block bg-white shadow-lg rounded-lg z-50">
                         <div class="flex flex-col gap-2 w-48 py-3 px-5">
-                            <p class="cursor-pointer hover:text-red-500">Sản phẩm 1</p>
-                            <p class="cursor-pointer hover:text-red-500">Sản phẩm 2</p>
-                            <p class="cursor-pointer hover:text-red-500">Sản phẩm 3</p>
+                            <p class="cursor-pointer">Sản phẩm 1</p>
+                            <p class="cursor-pointer">Sản phẩm 2</p>
+                            <p class="cursor-pointer">Sản phẩm 3</p>
                         </div>
                     </div>
                 </div>
@@ -93,14 +93,14 @@
 
                 <!-- Theo dõi đơn hàng -->
                 <a href="tracking.php"
-                    class="flex justify-center items-center col-span-3 text-black hover:text-red-500 text-decoration-none">
+                    class="flex justify-center items-center col-span-3 text-black text-decoration-none">
                     <img src="<?= $assets['tracking_icon'] ?>" alt="tracking" class="w-6">
                     <p class="align-items-center m-0 pl-2 hidden md:block">Theo dõi đơn hàng</p>
                 </a>
 
                 <!-- Hỗ trợ khách hàng -->
                 <a href="support.php"
-                    class="flex justify-center items-center col-span-3 text-black hover:text-red-500 text-decoration-none">
+                    class="flex justify-center items-center col-span-3 text-black text-decoration-none">
                     <img src="<?= $assets['support_icon'] ?>" alt="support" class="w-6">
                     <p class="align-items-center m-0 pl-2 hidden md:block">Hỗ trợ khách hàng</p>
                 </a>

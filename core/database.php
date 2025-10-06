@@ -8,7 +8,7 @@ class Database
 
     private $conn;
 
-    protected function connect()
+    public function connect()
     {
         $this->conn = new mysqli(self::HOST, self::USERNAME, self::PASSWORD, self::DB_NAME);
         try {
