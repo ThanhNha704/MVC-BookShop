@@ -1,7 +1,7 @@
 <?php
 class ProductModel extends BaseModel
 {
-    protected $table = 'products';
+    protected $table = 'books';
 
     public function getAll($selectFields = '*', $table, $orderBy = '', $limit = 16)
     {

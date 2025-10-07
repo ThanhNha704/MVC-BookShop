@@ -1,5 +1,5 @@
-<nav class="w-full top-navbar grid grid-rows-2 py-2 gap-2 h-auto bg-gray-100">
-    <div class="grid grid-cols-12 gap-4">
+<nav class="w-full sticky top-0 z-50 pb-2 gap-2 h-auto bg-gray-100">
+    <div class="grid grid-cols-12 gap-4 py-3 bg-gray-100">
 
         <!--  -->
         <div class="col-span-1"></div>
@@ -7,7 +7,7 @@
         <!-- Logo -->
         <div class="img_logo flex justify-center col-span-2">
             <a href="index.php">
-                <img class="w-20 logo_img" src="<?= $assets['logo_icon'] ?>" alt="logo">
+                <img class="sm:w-20 md:w-35 logo_img" src="<?= $assets['logo_icon'] ?>" alt="logo">
             </a>
         </div>
 
@@ -28,7 +28,7 @@
 
             <!-- Profile -->
             <div class="group relative flex justify-center align-items-center col-span-4">
-                <img src="<?= $assets['user_icon'] ?>" alt="profile" class="w-5 cursor-pointer">
+                <img src="<?= $assets['user_icon'] ?>" alt="profile" class="sm:w-6 md:w-8 cursor-pointer">
 
                 <?php if (!empty($_SESSION['user_id'])): ?>
 
@@ -39,23 +39,24 @@
                                 <?= htmlspecialchars($_SESSION['user_name']) ?>
                             </p>
                             <p onclick="window.location.href='index.php?controllers=order&action=index'"
-                                class="cursor-pointer">Giỏ Hàng</p>
+                                class="cursor-pointer">
+                                Giỏ Hàng</p>
                             <p onclick="window.location.href='index.php?controllers=auth&action=logout'"
-                                class="cursor-pointer">Đăng xuất</p>
+                                class="cursor-pointer">
+                                Đăng xuất</p>
                         </div>
                     </div>
                 <?php else: ?>
 
                     <!-- Nếu chưa đăng nhập -->
                     <div class="login flex">
-                        <a href="index.php?controller=authen&action=login"
-                            class="flex items-center text-black text-decoration-none">
-                            <p class="hidden md:block cursor-pointer m-0 px-2 border-r-1">Đăng nhập</p>
+                        <a href="?controller=authen&action=login" class="flex items-center text-black text-decoration-none">
+                            <p class="hidden md:block cursor-pointer m-0 px-2 border-r-1 text-lg font-normal">Đăng nhập</p>
                         </a>
 
-                        <a href="index.php?controller=authen&action=register"
+                        <a href="?controller=authen&action=register"
                             class="flex items-center text-black text-decoration-none">
-                            <p class="hidden md:block cursor-pointer m-0 p-2">Đăng ký</p>
+                            <p class="hidden md:block cursor-pointer m-0 p-2 text-lg font-normal">Đăng ký</p>
                         </a>
                     </div>
                 <?php endif; ?>
@@ -67,7 +68,7 @@
     </div>
 
     <!-- Bottom Navbar -->
-    <div class="bottom-navbar py-2 gap-2 h-auto bg-amber-500">
+    <div class="bottom-navbar h-fit py-2 gap-2 bg-amber-500">
         <div class="flex justify-center align-items-center">
             <div class="grid grid-cols-12 w-full">
 
@@ -76,8 +77,8 @@
 
                 <!-- Danh mục sản phẩm -->
                 <div class="group relative col-span-3 flex justify-center items-center">
-                    <img src="<?= $assets['menu_icon'] ?>" alt="menu" class="w-8">
-                    <p class="text-black font-normal m-0 pl-2 hidden md:block">DANH MỤC SẢN PHẨM</p>
+                    <img src="<?= $assets['menu_icon'] ?>" alt="menu" class="sm:w-6 md:w-8">
+                    <p class="text-black text-lg font-normal m-0 pl-2 hidden md:block">DANH MỤC SẢN PHẨM</p>
 
                     <div class="absolute top-full left-16 hidden group-hover:block bg-white shadow-lg rounded-lg z-50">
                         <div class="flex flex-col gap-2 w-48 py-3 px-5">
@@ -89,23 +90,25 @@
                 </div>
 
                 <!--  -->
-                <div class="col-span-1"></div>
+                <div class="col-span-3"></div>
 
                 <!-- Theo dõi đơn hàng -->
                 <a href="tracking.php"
-                    class="flex justify-center items-center col-span-3 text-black text-decoration-none">
-                    <img src="<?= $assets['tracking_icon'] ?>" alt="tracking" class="w-6">
-                    <p class="align-items-center m-0 pl-2 hidden md:block">Theo dõi đơn hàng</p>
+                    class="flex justify-center items-center col-span-2 text-black text-decoration-none">
+                    <img src="<?= $assets['tracking_icon'] ?>" alt="tracking" class="sm:w-6 md:w-8">
+                    <p class="text-lg m-0 pl-2 hidden md:block">Theo dõi đơn hàng</p>
                 </a>
 
                 <!-- Hỗ trợ khách hàng -->
                 <a href="support.php"
-                    class="flex justify-center items-center col-span-3 text-black text-decoration-none">
-                    <img src="<?= $assets['support_icon'] ?>" alt="support" class="w-6">
-                    <p class="align-items-center m-0 pl-2 hidden md:block">Hỗ trợ khách hàng</p>
+                    class="flex justify-center items-center col-span-2 text-black text-decoration-none">
+                    <img src="<?= $assets['support_icon'] ?>" alt="support" class="sm:w-6 md:w-8">
+                    <p class="text-lg m-0 pl-2 hidden md:block">Hỗ trợ khách hàng</p>
                 </a>
 
                 <!--  -->
                 <div class="col-span-1"></div>
             </div>
+        </div>
+    </div>
 </nav>

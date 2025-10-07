@@ -16,7 +16,6 @@ class Database
                 throw new Exception("Connect failed: " . $this->conn->connect_error);
             }
             $this->conn->set_charset("utf8");
-            echo "Connected successfully to the database.";
             return $this->conn;
         } catch (Exception $e) {
             echo 'Message: ' . $e->getMessage();
