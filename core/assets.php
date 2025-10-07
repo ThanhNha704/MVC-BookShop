@@ -7,5 +7,6 @@ $assets = array(
     'user_icon' => BASE_URL . 'public/assets/frontend/user_icon.svg',
     'support_icon' => BASE_URL . 'public/assets/frontend/support_icon.svg',
     'tracking_icon' => BASE_URL . 'public/assets/frontend/tracking_icon.svg',
+    'right_icon' => BASE_URL . 'public/assets/frontend/right_icon.svg',
     // Thêm các tài nguyên khác nếu cần
 );

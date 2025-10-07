@@ -1,8 +1,5 @@
 <nav class="w-full sticky top-0 z-50 pb-2 gap-2 h-auto bg-gray-100">
-    <div class="grid grid-cols-12 gap-4 py-3 bg-gray-100">
-
-        <!--  -->
-        <div class="col-span-1"></div>
+    <div class="w-[90%] mx-auto grid grid-cols-10 gap-4 py-3 bg-gray-100">
 
         <!-- Logo -->
         <div class="img_logo flex justify-center col-span-2">
@@ -13,11 +10,12 @@
 
         <!-- Search -->
         <div class="flex justify-center items-center col-span-6">
-            <form action="product" method="GET" class="relative h-10 flex items-center justify-center grow">
+            <form action="product" method="GET" class="relative h-[60%] flex items-center justify-center grow">
                 <input type="text" name="search" placeholder="Tìm kiếm..."
-                    class=" w-full px-4 py-2 border-2 border-amber-500 rounded-md focus:outline-none">
+                    class="h-full w-full px-4 py-2 border-2 border-amber-500 rounded-xl focus:outline-none">
                 <button type="submit"
-                    class="hidden md:block absolute inset-y-0 right-0 flex items-center bg-amber-500 border-2 border-amber-500 focus:outline-none px-2 py-1 rounded-r-md hover:bg-amber-600 hover:border-amber-600">
+                    class="hidden md:block absolute inset-y-0 right-0 flex items-center bg-amber-500 border-2 border-amber-500 
+                    focus:outline-none px-2 py-1 rounded-r-xl hover:bg-amber-600 hover:border-amber-600">
                     <img src="<?= $assets['search_icon'] ?>" alt="search" class="h-6">
                 </button>
             </form>
@@ -51,64 +49,66 @@
                     <!-- Nếu chưa đăng nhập -->
                     <div class="login flex">
                         <a href="?controller=authen&action=login" class="flex items-center text-black text-decoration-none">
-                            <p class="hidden md:block cursor-pointer m-0 px-2 border-r-1 text-lg font-normal">Đăng nhập</p>
+                            <p class="hidden md:block cursor-pointer m-0 px-2 border-r-1 
+                            md:text-lg lg:text-xl text-lg font-normal">Đăng nhập</p>
                         </a>
 
                         <a href="?controller=authen&action=register"
                             class="flex items-center text-black text-decoration-none">
-                            <p class="hidden md:block cursor-pointer m-0 p-2 text-lg font-normal">Đăng ký</p>
+                            <p class="hidden md:block cursor-pointer m-0 p-2 
+                            md:text-lg lg:text-xl font-normal">Đăng ký</p>
                         </a>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-
-        <!--  -->
-        <div class="col-span-1"></div>
     </div>
 
     <!-- Bottom Navbar -->
-    <div class="bottom-navbar h-fit py-2 gap-2 bg-amber-500">
-        <div class="flex justify-center align-items-center">
-            <div class="grid grid-cols-12 w-full">
+    <div class="bottom-navbar h-max w-full py-2 gap-2 bg-amber-500">
+        <!-- <div class="flex justify-center align-items-center"> -->
+        <div class="w-[90%] mx-auto grid grid-cols-8 gap-4">
 
-                <!--  -->
-                <div class="col-span-1"></div>
+            <!-- Danh mục sản phẩm -->
+            <div class="group relative col-span-2 flex justify-center items-center py-2">
+                <img src="<?= $assets['menu_icon'] ?>" alt="menu" class="sm:w-6 md:w-8">
+                <p class="text-black md:text-lg lg:text-2xl font-normal m-0 pl-2 hidden md:block">
+                    DANH MỤC SẢN PHẨM
+                </p>
 
-                <!-- Danh mục sản phẩm -->
-                <div class="group relative col-span-3 flex justify-center items-center">
-                    <img src="<?= $assets['menu_icon'] ?>" alt="menu" class="sm:w-6 md:w-8">
-                    <p class="text-black text-lg font-normal m-0 pl-2 hidden md:block">DANH MỤC SẢN PHẨM</p>
-
-                    <div class="absolute top-full left-16 hidden group-hover:block bg-white shadow-lg rounded-lg z-50">
-                        <div class="flex flex-col gap-2 w-48 py-3 px-5">
-                            <p class="cursor-pointer">Sản phẩm 1</p>
-                            <p class="cursor-pointer">Sản phẩm 2</p>
-                            <p class="cursor-pointer">Sản phẩm 3</p>
-                        </div>
+                <div class="absolute top-full left-16 hidden group-hover:block bg-white shadow-lg rounded-lg z-50">
+                    <div class="flex flex-col w-48 py-3 pl-5">
+                        <a class="flex w-full justify-between pr-2 py-2 text-xl cursor-pointer">
+                            Sản phẩm 1
+                            <img src="<?= $assets['right_icon']?>" alt="'right_icon" class="sm:w-6 md:w-8">
+                        </a>
+                        <a class="flex w-full justify-between pr-2 py-2 text-xl cursor-pointer">
+                            Sản phẩm 2
+                            <img src="<?= $assets['right_icon']?>" alt="'right_icon" class="right-0 sm:w-6 md:w-8">
+                        </a>
+                        <a class="flex w-full justify-between pr-2 py-2 text-xl cursor-pointer">
+                            Sản phẩm 3
+                            <img src="<?= $assets['right_icon']?>" alt="'right_icon" class="sm:w-6 md:w-8">
+                        </a>
                     </div>
                 </div>
-
-                <!--  -->
-                <div class="col-span-3"></div>
-
-                <!-- Theo dõi đơn hàng -->
-                <a href="tracking.php"
-                    class="flex justify-center items-center col-span-2 text-black text-decoration-none">
-                    <img src="<?= $assets['tracking_icon'] ?>" alt="tracking" class="sm:w-6 md:w-8">
-                    <p class="text-lg m-0 pl-2 hidden md:block">Theo dõi đơn hàng</p>
-                </a>
-
-                <!-- Hỗ trợ khách hàng -->
-                <a href="support.php"
-                    class="flex justify-center items-center col-span-2 text-black text-decoration-none">
-                    <img src="<?= $assets['support_icon'] ?>" alt="support" class="sm:w-6 md:w-8">
-                    <p class="text-lg m-0 pl-2 hidden md:block">Hỗ trợ khách hàng</p>
-                </a>
-
-                <!--  -->
-                <div class="col-span-1"></div>
             </div>
+
+            <!--  -->
+            <div class="col-span-3"></div>
+
+            <!-- Theo dõi đơn hàng -->
+            <a href="tracking.php" class="flex place-content-end items-center col-span-2 py-2 text-black text-decoration-none">
+                <img src="<?= $assets['tracking_icon'] ?>" alt="tracking" class="sm:w-6 md:w-8">
+                <p class="md:text-lg lg:text-xl m-0 pl-2 pr-4 hidden md:block border-r-1">Theo dõi đơn hàng</p>
+            </a>
+
+            <!-- Hỗ trợ khách hàng -->
+            <a href="support.php" class="flex justify-center items-center col-span-1 py-2 text-black text-decoration-none">
+                <img src="<?= $assets['support_icon'] ?>" alt="support" class="sm:w-6 md:w-8">
+                <p class="md:text-lg lg:text-xl m-0 pl-2 hidden md:block">Hỗ trợ khách hàng</p>
+            </a>
         </div>
+        <!-- </div> -->
     </div>
 </nav>
