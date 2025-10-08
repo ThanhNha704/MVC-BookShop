@@ -1,3 +1,4 @@
+<h1>homecontroller</h1>
 <?php
 class HomeController extends BaseController
 {
@@ -14,12 +15,17 @@ class HomeController extends BaseController
     public function index()
     {
          // Lấy tất cả sản phẩm
-        $products = $this->productModel->getItem(
+        $products = $this->productModel->getAll(
             '*',
             'books'
         );
 
         // Gọi view home.php
         return $this->view('product/index', ['books'=>$products]);
+    }
+
+    public function search()
+    {
+        // $products = $this->productModel->getItem()
     }
 }

@@ -10,13 +10,17 @@
 
         <!-- Search -->
         <div class="flex justify-center items-center col-span-6">
-            <form action="product" method="GET" class="relative h-[60%] flex items-center justify-center grow">
-                <input type="text" name="search" placeholder="Tìm kiếm..."
+            <form id="filterForm" action="index.php" method="GET"
+                class="relative h-[60%] flex items-center justify-center grow">
+
+                <input type="hidden" name="controller" value="product">
+
+                <input type="text" name="search_query" id="searchInput" placeholder="Tìm kiếm sản phẩm..."
                     class="h-full w-full px-4 py-2 border-2 border-amber-500 rounded-xl focus:outline-none">
-                <button type="submit"
-                    class="hidden md:block absolute inset-y-0 right-0 flex items-center bg-amber-500 border-2 border-amber-500 
-                    focus:outline-none px-2 py-1 rounded-r-xl hover:bg-amber-600 hover:border-amber-600">
-                    <img src="<?= $assets['search_icon'] ?>" alt="search" class="h-6">
+
+                <button type="submit" class="hidden md:block absolute inset-y-0 right-0 flex items-center bg-amber-500 border-2 border-amber-500 
+                focus:outline-none px-2 py-1 rounded-r-xl hover:bg-amber-600 hover:border-amber-600">
+                    <img src="<?= $assets['search_icon'] ?? 'path/to/search_icon.png' ?>" alt="search" class="h-6">
                 </button>
             </form>
         </div>
@@ -80,31 +84,33 @@
                     <div class="flex flex-col w-48 py-3 pl-5">
                         <a class="flex w-full justify-between pr-2 py-2 text-xl cursor-pointer">
                             Sản phẩm 1
-                            <img src="<?= $assets['right_icon']?>" alt="'right_icon" class="sm:w-6 md:w-8">
+                            <img src="<?= $assets['right_icon'] ?>" alt="'right_icon" class="sm:w-6 md:w-8">
                         </a>
                         <a class="flex w-full justify-between pr-2 py-2 text-xl cursor-pointer">
                             Sản phẩm 2
-                            <img src="<?= $assets['right_icon']?>" alt="'right_icon" class="right-0 sm:w-6 md:w-8">
+                            <img src="<?= $assets['right_icon'] ?>" alt="'right_icon" class="right-0 sm:w-6 md:w-8">
                         </a>
                         <a class="flex w-full justify-between pr-2 py-2 text-xl cursor-pointer">
                             Sản phẩm 3
-                            <img src="<?= $assets['right_icon']?>" alt="'right_icon" class="sm:w-6 md:w-8">
+                            <img src="<?= $assets['right_icon'] ?>" alt="'right_icon" class="sm:w-6 md:w-8">
                         </a>
                     </div>
                 </div>
             </div>
 
             <!--  -->
-            <div class="col-span-3"></div>
+            <div class="col-span-2"></div>
 
             <!-- Theo dõi đơn hàng -->
-            <a href="tracking.php" class="flex place-content-end items-center col-span-2 py-2 text-black text-decoration-none">
+            <a href="tracking.php"
+                class="flex place-content-end items-center col-span-2 py-2 text-black text-decoration-none">
                 <img src="<?= $assets['tracking_icon'] ?>" alt="tracking" class="sm:w-6 md:w-8">
                 <p class="md:text-lg lg:text-xl m-0 pl-2 pr-4 hidden md:block border-r-1">Theo dõi đơn hàng</p>
             </a>
 
             <!-- Hỗ trợ khách hàng -->
-            <a href="support.php" class="flex justify-center items-center col-span-1 py-2 text-black text-decoration-none">
+            <a href="support.php"
+                class="flex place-content-start items-center col-span-2 py-2 text-black text-decoration-none">
                 <img src="<?= $assets['support_icon'] ?>" alt="support" class="sm:w-6 md:w-8">
                 <p class="md:text-lg lg:text-xl m-0 pl-2 hidden md:block">Hỗ trợ khách hàng</p>
             </a>

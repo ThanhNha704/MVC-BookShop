@@ -11,7 +11,7 @@ class BaseModel extends Database {
     }
 
     // Lấy tất cả bản ghi từ bảng
-    public function getItem($selectFields = '*', $table, $orderBy = '', $limit = 16) {
+    public function getAll($selectFields = '*', $table, $orderBy = '', $limit = 16) {
         $sql = "SELECT $selectFields FROM $table";
         if (!empty($orderBy)) {
             $sql .= " ORDER BY $orderBy";
@@ -22,5 +22,11 @@ class BaseModel extends Database {
             return $result->fetch_all(MYSQLI_ASSOC);
         }
         return [];
+    }
+
+    public function findByName($table, $title, $name){
+        $sql = "SELECT * FROM $table WHERE $title LIKE '%$name%' LIMIT 1";
+        $query = $this->db->query($sql);
+        return $result = $query->fetch_all(MYSQLI_ASSOC);
     }
 }

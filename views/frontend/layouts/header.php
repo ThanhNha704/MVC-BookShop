@@ -20,7 +20,8 @@ require_once __DIR__ . '/../../../core/assets.php';
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <!-- css -->
-    <!-- <link rel="stylesheet" href="/Test/public/css/home/navbar.css">  -->
+    <!-- <link rel="stylesheet" href="css/footer.css"> -->
+
 
     <!-- css, script cho swiper -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" /> -->
