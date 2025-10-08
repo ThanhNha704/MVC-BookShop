@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <link rel="stylesheet" href="/layouts/css/footer.css">
+=======
+<link rel="stylesheet" href="./public/css/footer.css">
+>>>>>>> 90d3eb77489b12ccfb53c4ce6745ffd901707054
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-section about">
@@ -27,4 +31,8 @@
   <div class="footer-bottom">
     <p>© 2025 BOOKAZA - All rights reserved.</p>
   </div>
+<<<<<<< HEAD
 </footer>
+=======
+</footer>
+>>>>>>> 90d3eb77489b12ccfb53c4ce6745ffd901707054
