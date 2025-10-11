@@ -18,7 +18,7 @@ class BaseController
     // Phương thức để nạp View
     protected function view($viewPath, array $data = [])
     {
-        $viewPath = './views/frontend/layouts/' . $viewPath . '.php';
+        $viewPath = './views/frontend/' . $viewPath . '.php';
         include './views/frontend/layouts/header.php';
         include './views/frontend/layouts/navbar.php';
         include $viewPath;

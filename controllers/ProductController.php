@@ -1,4 +1,4 @@
-<h1>ProductController</h1>
+<!-- <h1>ProductController</h1> -->
 <?php
 class ProductController extends BaseController
 {
@@ -12,12 +12,8 @@ class ProductController extends BaseController
     }
     public function index()
     {
-        echo'index(productcontroller)';
-
-        $searchQuery = $_GET['search_query'] ?? '';
-
-        $products = $this->productModel->findByName('books', 'title', $searchQuery);
-        return $this->view('product/index', ['books' => $products]);
+        $products = $this->productModel->getAll('*', 'books');
+        return $this->view('layouts/products/index', ['books' => $products]);
     }
 
     public function show($id)
@@ -36,13 +32,18 @@ class ProductController extends BaseController
         $productModel = $this->loadModel('ProductModel');
         $results = $productModel->findByName('books', 'title', $keyword);
 
-        // 3. Tải View chỉ chứa danh sách sản phẩm (ví dụ: 'product/list_ajax')
-        // *Lưu ý: Thay vì dùng $this->view(), bạn chỉ cần tải nội dung View và echo ra.*
+        return $this->view('layouts/products/index', ['books' => $results]);
+    }
 
-        // Giả định bạn có hàm renderViewPart để tải một phần view mà không có layout
-        // $htmlContent = $this->view('product/list_ajax', ['results' => $results]);
-        return $this->view('product/index', ['books' => $results]);
-        // Trả về HTML
-        // echo $htmlContent;
+    public function getById($id)
+    {
+        $product = $this->productModel->findById($id);
+    }
+
+    public function details()
+    {
+        $product = $this->productModel->findById('books', $_GET['id']);
+        return $this->view('components/BookDetail', ['book'=>$product]);
+
     }
 }
