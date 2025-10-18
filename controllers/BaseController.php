@@ -29,7 +29,7 @@ class BaseController
         // Sử dụng $viewBaseDir để đảm bảo đường dẫn chính xác
         include './views/frontend/layouts/header.php';
         include './views/frontend/layouts/navbar.php';
-        
+
         // 3. Include View chính
         if (file_exists($viewFile)) {
             // Truyền dữ liệu vào view
@@ -38,8 +38,15 @@ class BaseController
         } else {
             die("View file '{$viewPath}' not found.");
         }
-        
+
         // 4. Include Footer
         include './views/frontend/layouts/footer.php';
+    }
+
+    // Giả định trong BaseController.php
+    protected function redirect($url)
+    {
+        header("Location: " . $url);
+        exit(); // RẤT QUAN TRỌNG
     }
 }

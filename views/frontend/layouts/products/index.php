@@ -7,8 +7,8 @@
     <?php
     $listItem = $data['books'];
     foreach ($listItem as $key => $value) {
-        $currentPrice = $value['price'] * (100 - ($book['discount'] ?? 0)) / 100;
-        $discountPercent = $book['discount'] ?? 0;
+        $currentPrice = $value['price'] * (100 - ($value['discount'] ?? 0)) / 100;
+        $discountPercent = $value['discount'] ?? 0;
         ?>
 
         <a href="?controller=product&action=details&id=<?= $value['id'] ?>" class="relative mx-auto transition ease-in-out duration-300 hover:shadow-2xl shadow-md h-max w-full md:w-[90%] lg:w-[70%] col-span-2 
@@ -17,7 +17,7 @@
 
             <div class="overflow-hidden flex flex-col justify-start items-center py-2 px-1">
 
-                <img class="mx-auto shadow-md w-36 h-48 object-cover mb-4"
+                <img class="mx-auto shadow-md w-max h-48 object-cover mb-4"
                     src="<?= BASE_URL . 'public/products/' . htmlspecialchars($value['image']) ?>"
                     alt="<?= htmlspecialchars($value['title']); ?>">
 
@@ -38,7 +38,7 @@
                     </p>
 
                     <?php
-                    if (($value['discount'] ?? 0) != 0) {
+                    if ($discountPercent != 0) {
                         ?>
                         <p class="text-sm line-through text-gray-500 font-normal">
                             <?= number_format(

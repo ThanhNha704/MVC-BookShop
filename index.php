@@ -10,6 +10,7 @@ require_once __DIR__ . '/core/Database.php';
 require_once __DIR__ . '/models/BaseModel.php';
 require_once __DIR__ . '/controllers/BaseController.php';
 
+
 // XÓA DÒNG NÀY: require __DIR__ . '/../../components/FlashSale.php'; 
 // (Component phải được gọi trong file View, không phải file index.php)
 

@@ -8,13 +8,8 @@ class HomeController extends BaseController
     {
         // Gọi model để lấy dữ liệu sản phẩm hiển thị ở trang chủ
         $this->loadModel('ProductModel');
-        // Vấn đề có thể nằm ở đây: $this->loadModel() đã nạp model vào $this->model (của BaseController)
-        // Nếu loadModel không gán vào $this->productModel, ta cần sửa lại BaseController.
         
-        // GIẢI PHÁP: Giả định loadModel() gán model vào $this->model, sau đó ta gán nó vào biến riêng.
-        // Tuy nhiên, để đơn giản, ta chỉ cần khởi tạo nó một lần.
-        
-        $this->productModel = new ProductModel(); // Giữ nguyên cách này nếu loadModel() chỉ nạp file
+        $this->productModel = new ProductModel(); 
     }
 
      public function index()
@@ -23,7 +18,7 @@ class HomeController extends BaseController
         $products = $this->productModel->getAll(
             '*',
             'books', // Tên bảng
-            'created_at DESC'
+            'sold DESC'
         );
         
         // Gán $products = [] nếu $products là null

@@ -1,43 +1,50 @@
-<!-- <div class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-    <div class="w-full max-w-sm bg-white rounded-xl shadow-2xl p-8">
-        
-        <div class="text-center mb-6">
-            <i class="fas fa-envelope-open-text text-amber-500 text-5xl mb-3"></i>
-            <h2 class="text-2xl font-extrabold text-gray-800">Xác Nhận Mã OTP</h2>
-            <p class="text-sm text-gray-500 mt-2">Vui lòng kiểm tra email của bạn để nhận mã xác nhận.</p>
-        </div>
+<?php 
+// Lấy email từ biến $data được truyền từ Controller (showVerifyOtpForm)
+$email = $data['email'] ?? 'bạn'; 
+?>
 
-        <?php if (!empty($message ?? '')): ?>
-            <div class="bg-green-100 text-green-600 p-3 rounded mb-4 text-sm text-center">
-                <i class="fas fa-check-circle mr-2"></i><?= $message ?>
-            </div>
-        <?php endif; ?>
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div class="max-w-md w-full p-8 space-y-6 bg-white rounded-xl shadow-lg">
         
-        <?php if (!empty($error ?? '')): ?>
-            <div class="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm text-center">
-                <i class="fas fa-exclamation-triangle mr-2"></i><?= $error ?>
+        <h2 class="text-3xl font-extrabold text-center text-gray-900">
+            Xác Thực Mã OTP
+        </h2>
+
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm" role="alert">
+                <?= $_SESSION['error']; ?>
             </div>
+            <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
-        
-        <form action="index.php?controller=authen&action=verifyOtp" method="POST" class="space-y-6">
+
+        <form action="?controller=auth&action=verifyOtp" method="POST" class="mt-8 space-y-4"> 
             
-            <div>
-                <label for="otp" class="block text-sm font-medium text-gray-700 mb-1 text-center">Nhập mã 6 chữ số:</label>
-                <input type="text" id="otp" name="otp" required 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500 transition duration-150" 
-                       maxlength="6" placeholder="______">
-            </div>
+            <p class="text-center text-gray-600">
+                Mã OTP đã được gửi đến email: 
+                <strong class="font-medium text-indigo-600"><?= htmlspecialchars($email) ?></strong>
+            </p>
             
-            <input type="hidden" name="action" value="verify">
+            <input 
+                type="text" 
+                name="otp_code" 
+                placeholder="Nhập mã OTP 6 chữ số" 
+                maxlength="6" 
+                required
+                class="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-center text-2xl tracking-widest text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                style="letter-spacing: 0.5em;"
+            >
             
-            <button type="submit" 
-                    class="w-full flex items-center justify-center bg-amber-500 text-white font-bold py-2.5 rounded-lg hover:bg-amber-600 transition duration-200 shadow-md">
-                <i class="fas fa-check-circle mr-2"></i>XÁC NHẬN
+            <button type="submit"
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                Xác Thực
             </button>
+
+            <div class="text-center">
+                <a href="?controller=auth&action=resendOtp" class="text-sm font-medium text-gray-500 hover:text-gray-700">
+                    Chưa nhận được mã? Gửi lại
+                </a>
+            </div>
+
         </form>
-        
-        <p class="mt-4 text-center text-xs text-gray-500">
-            *Mã có thể hết hạn sau vài phút.
-        </p>
     </div>
-</div> -->
+</div>

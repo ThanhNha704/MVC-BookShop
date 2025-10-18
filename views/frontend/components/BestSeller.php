@@ -1,5 +1,5 @@
 <?php
-// Đảm bảo BASE_URL được định nghĩa nếu bạn dùng nó trong header/footer
+
 ?>
 <section class="mb-12 max-w-[95%] mx-auto">
     <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-4 border-amber-500 pb-2 inline-block">
