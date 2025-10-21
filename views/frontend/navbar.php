@@ -14,7 +14,7 @@ $userName = $_SESSION['user_name'] ?? '';
 // Biến $userRole không còn được sử dụng để kiểm tra logic hiển thị
 ?>
 
-<nav class="w-full sticky top-0 z-50 pb-2 gap-2 h-auto bg-amber-500">
+<nav class="w-full sticky top-0 z-50 pb-2 gap-2 h-auto bg-amber-500 shadow-xl">
     <div class="w-[90%] mx-auto grid grid-cols-12 gap-4 py-1">
 
         <div class="img_logo flex justify-center col-span-3">
@@ -27,8 +27,7 @@ $userName = $_SESSION['user_name'] ?? '';
             <ul class="grid grid-cols-4 px-2">
                 <li class="flex justify-center items-center col-span-1 text-white text-xl font-bold">
                     <a href="index.php">
-                        <p
-                            class="p-1 border-b-2 border-amber-500 hover:border-white
+                        <p class="p-1 border-b-2 border-amber-500 hover:border-white
                         <?php if ($controller == 'home' && (!isset($_GET['action']) || $_GET['action'] == 'index'))
                             echo $active; ?>">
                             TRANG CHỦ</p>
@@ -43,8 +42,7 @@ $userName = $_SESSION['user_name'] ?? '';
                 </li>
                 <li class="flex justify-center items-center col-span-1 text-white text-xl font-bold">
                     <a href="index.php?controller=home&action=about">
-                        <p
-                            class="p-1 border-b-2 border-amber-500 hover:border-white 
+                        <p class="p-1 border-b-2 border-amber-500 hover:border-white 
                         <?php if ($controller == 'home' && isset($_GET['action']) && $_GET['action'] == 'about')
                             echo $active; ?>">
                             GIỚI THIỆU</p>
@@ -60,18 +58,23 @@ $userName = $_SESSION['user_name'] ?? '';
             </ul>
         </div>
 
-        <div class="flex justify-center space-x-2 col-span-3">
-
-            <div class="group relative flex justify-center items-center">
+        <div class="flex justify-center space-x-2 col-span-3 space-x-2">
+            <div class="group relative flex justify-center items-center space-x-2">
+                <?php if ($isLoggedIn): ?>
+                    <p class="flex items-center text-2xl text-white">Xin chào,
+                        <?= htmlspecialchars($userName) ?>
+                    </p>
+                <?php endif; ?>
                 <img src="<?= $assets['user_icon'] ?>" alt="profile" class="sm:w-6 md:w-8 cursor-pointer">
 
                 <?php if ($isLoggedIn): ?>
-                    <div class="z-50 group-hover:block  absolute right-[100%] top-[50%] bg-white shadow-lg rounded-l-lg rounded-br-lg pt-4 border-1 border-amber-500">
+                    <!-- <p class="text-xl text-red-500">Xin chào,
+                        <?= htmlspecialchars($userName) ?>
+                    </p> -->
+                    <div
+                        class="z-50 group-hover:block hidden absolute left-[100%] top-[50%] bg-white shadow-lg rounded-r-lg rounded-bl-lg pt-2 border-1 border-amber-500">
                         <div class="flex flex-col gap-2 w-48 py-2 px-4">
 
-                            <p class="text-xl text-red-500">Xin chào,
-                                <?= htmlspecialchars($userName) ?>
-                            </p>
 
                             <a href="?controller=order&action=index" class="text-xl hover:font-medium">
                                 Trạng Thái Đơn Hàng</a>

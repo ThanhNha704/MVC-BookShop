@@ -1,9 +1,8 @@
 <?php
 class BaseController
 {
-    protected $data = []; // Dữ liệu truyền từ Controller đến View
+    protected $data = [];
 
-    // Phương thức để nạp Model
     protected function loadModel($modelName)
     {
         $modelPath = './models/' . $modelName . '.php';
@@ -15,38 +14,38 @@ class BaseController
         }
     }
 
-    // Phương thức để nạp View
-    protected function view($viewPath, array $data = [])
+    // Phương thức nạp View
+    protected function view($viewPath, array $data = [], $isAdminLayout = false)
     {
-        // 1. Định nghĩa đường dẫn tuyệt đối cho thư mục VIEW
-        // Giả sử tệp BaseController.php nằm trong thư mục controllers/
-        // Và thư mục VIEWS nằm ở ../views
-        $viewBaseDir = dirname(__DIR__) . '/views/frontend/';
+        extract($data);
 
-        $viewFile = $viewBaseDir . $viewPath . '.php';
+        $viewsBaseDir = dirname(__DIR__) . '/views/';
+        $viewFile = $viewsBaseDir . $viewPath . '.php';
+        if ($isAdminLayout) {
+            $layoutFile = $viewsBaseDir . 'admin/';
+            include $layoutFile . '/header.php';
+            include $layoutFile . '/sidebar.php';
+            if (!file_exists($layoutFile . $viewPath . '.php')) {
+                echo $layoutFile . $viewPath . '.php';
+            }
+            include $layoutFile . $viewPath . '.php';
+            echo '</div>';
+            echo '</body>';
+            echo '</html>';
 
-        // 2. Kiểm tra và include Header/Navbar
-        // Sử dụng $viewBaseDir để đảm bảo đường dẫn chính xác
-        include './views/frontend/layouts/header.php';
-        include './views/frontend/layouts/navbar.php';
-
-        // 3. Include View chính
-        if (file_exists($viewFile)) {
-            // Truyền dữ liệu vào view
-            extract($data);
-            include $viewFile;
+            // include $layoutFile . '/footer.php';
         } else {
-            die("View file '{$viewPath}' not found.");
+            $layoutFile = $viewsBaseDir . 'frontend/';
+            include $layoutFile . '/header.php';
+            include $layoutFile . '/navbar.php';
+            include $layoutFile . $viewPath . '.php';
+            include $layoutFile . '/footer.php';
         }
-
-        // 4. Include Footer
-        include './views/frontend/layouts/footer.php';
     }
 
-    // Giả định trong BaseController.php
     protected function redirect($url)
     {
-        header("Location: " . $url);
-        exit(); // RẤT QUAN TRỌNG
+        echo header("Location: " . $url);
+        exit();
     }
 }

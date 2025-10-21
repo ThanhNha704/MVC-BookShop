@@ -1,12 +1,12 @@
 <?php 
 // Lấy email từ biến $data được truyền từ Controller (showVerifyOtpForm)
-$email = $data['email'] ?? 'bạn'; 
+$email = $_SESSION['verify_email'] ?? 'bạn'; 
 ?>
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
     <div class="max-w-md w-full p-8 space-y-6 bg-white rounded-xl shadow-lg">
         
-        <h2 class="text-3xl font-extrabold text-center text-gray-900">
+        <h2 class="text-3xl font-bold text-center text-gray-900">
             Xác Thực Mã OTP
         </h2>
 
