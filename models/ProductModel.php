@@ -6,26 +6,42 @@ class ProductModel extends BaseModel
     // getAll trong BaseModel đã được viết cho việc gọi từ ProductModel
     public function getAll($selectFields = '*', $table = '', $orderBy = '', $limit = '')
     {
-        return parent::getAll($selectFields, $this->table, $orderBy, $limit); 
+        return parent::getAll($selectFields, $this->table, $orderBy, $limit);
     }
-    
-    public function getByName($name)
+
+    public function getProductByName(string $name): array
     {
-        // Gọi findByName của BaseModel, truyền tên bảng và tên cột
-        return $this-> findByName($this->table, 'title', $name); 
+        // Gọi getByName trong BaseModel (đã được sửa)
+        // Lưu ý: Giá trị $name được xử lý tối thiểu (real_escape_string) trong BaseModel
+        return parent::getByName($this->table, 'title', $name);
     }
-    public function getBookById($id)
+    public function getProductById(string $id): array
     {
-        // Nhưng vì $this->table đã là 'books', ta chỉ cần gọi với $this->table và $id
-        // HOẶC dùng $table được truyền vào.
-        // Để nhất quán, ta dùng $table được truyền vào (BaseModel dùng $table)
-        return parent::findById($this->table, $id);
+        return parent::getById($this->table, 'id', $id);
     }
-    
-    // Thêm một phương thức tiện ích cho Controller để không cần truyền tên bảng
-    // public function getBookById($id)
-    // {
-    //     // Gọi phương thức findById đã định nghĩa lại ở trên, truyền tên bảng mặc định
-    //     return $this->findById($this->table, $id);
-    // }
+
+    public function updateProduct($id, $data)
+    {
+        try {
+            $setClause = [];
+            foreach ($data as $key => $value) {
+                if ($value !== null) {
+                    $value = $this->db->real_escape_string($value);
+                    $setClause[] = "`$key` = '$value'";
+                }
+            }
+
+            if (empty($setClause)) {
+                return false;
+            }
+
+            $setClause = implode(', ', $setClause);
+            $sql = "UPDATE {$this->table} SET $setClause WHERE id = " . (int)$id;
+            
+            return $this->db->query($sql);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }

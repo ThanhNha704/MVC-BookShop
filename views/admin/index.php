@@ -1,16 +1,13 @@
 <?php
+// print_r($data);
+// print_r($data['recentOrders']);
 // Giả định các biến dữ liệu được truyền vào từ Controller
 // Dữ liệu này sẽ được Controller fetch từ database (Model) và truyền vào.
-$totalRevenue = $data['total_revenue'] ?? 125000000; // Doanh thu tổng
-$totalOrders = $data['total_orders'] ?? 1560; // Tổng đơn hàng
-$newUsers = $data['new_users'] ?? 45; // Người dùng mới
-$newReviews = $data['new_reviews'] ?? 78; // Đánh giá mới
-$recentOrders = $data['recent_orders'] ?? [
-    ['id' => 'DH9021', 'user' => 'Nguyễn Văn A', 'total' => 545000, 'status' => 'Đã giao'],
-    ['id' => 'DH9020', 'user' => 'Trần Thị B', 'total' => 1200000, 'status' => 'Đang xử lý'],
-    ['id' => 'DH9019', 'user' => 'Lê Văn C', 'total' => 350000, 'status' => 'Đã hủy'],
-    ['id' => 'DH9018', 'user' => 'Phạm Thu D', 'total' => 780000, 'status' => 'Đã giao'],
-];
+$totalRevenue = $data['totalRevenue'] ?? 125000000; // Doanh thu tổng
+$totalOrders = $data['totalOrders'] ?? 1560; // Tổng đơn hàng
+$newUsers = $data['newUsers'] ?? 45; // Người dùng mới
+$newReviews = $data['newReviews'] ?? 78; // Đánh giá mới
+$recentOrders = $data['recentOrders'] ?? [];
 
 // Hàm format tiền tệ
 function format_currency($amount)
@@ -19,7 +16,7 @@ function format_currency($amount)
 }
 ?>
 
-<div class="flex-1 bg-white p-6">
+<div class="flex-1 bg-white p-6 overflow-scroll">
 
     <h2 class="text-3xl font-extrabold text-gray-800 border-b pb-3">Tổng Quan Quản Trị</h2>
     <p class="text-gray-600">Tổng quát về hoạt động kinh doanh của bạn.</p>
@@ -89,24 +86,30 @@ function format_currency($amount)
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <?php foreach ($recentOrders as $order): ?>
+                    <?php foreach ($recentOrders as $order => $value): ?>
+
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?= $order['id'] ?>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?= $value['id'] ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= $order['user'] ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= $value['customer_name'] ?>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">
-                                <?= format_currency($order['total']) ?></td>
+                                <?= format_currency($value['total']) ?>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <?php
                                 $statusClass = [
-                                    'Đã giao' => 'bg-green-100 text-green-800',
-                                    'Đang xử lý' => 'bg-yellow-100 text-yellow-800',
+                                    'Chờ xác nhận' => 'bg-yellow-100 text-yellow-800',
+                                    'Xác nhận' => 'bg-green-100 text-green-800',
+                                    'Đang giao' => 'bg-blue-100 text-blue-800',
+                                    'Đã giao' => 'bg-indigo-100 text-indigo-800',
+                                    'Thành công' => 'bg-emerald-100 text-emerald-800',
                                     'Đã hủy' => 'bg-red-100 text-red-800',
-                                ][$order['status']] ?? 'bg-gray-100 text-gray-800';
+                                ][$value['status']] ?? 'bg-gray-100 text-gray-800';
                                 ?>
                                 <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $statusClass ?>">
-                                    <?= $order['status'] ?>
+                                    class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <?= $statusClass ?>">
+                                    <?= $value['status'] ?>
                                 </span>
                             </td>
                         </tr>
@@ -114,10 +117,9 @@ function format_currency($amount)
                 </tbody>
             </table>
         </div>
-        <div class="mt-4 text-right">
+        <div class="mt-4 py-2 text-right">
             <a href="?controller=admin&action=orders"
-                class="text-sm font-medium text-amber-600 hover:text-amber-800">Xem tất cả đơn hàng &rarr;</a>
+                class="text-md font-medium text-amber-600 hover:text-amber-800">Xem tất cả đơn hàng &rarr;</a>
         </div>
     </div>
-
 </div>

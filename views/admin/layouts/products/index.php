@@ -13,8 +13,7 @@ if (!function_exists('format_currency')) {
 $listProduct = $data['products'] ?? [];
 
 // Thiết lập chiều cao cho khu vực cuộn
-$tableMaxHeight = 'max-h-full'; // Tailwind CSS class cho chiều cao tối đa 96 (khoảng 24rem/384px)
-
+$tableMaxHeight = 'max-h-full'; 
 ?>
 
 <div class="flex-1 bg-white p-6">
@@ -24,8 +23,8 @@ $tableMaxHeight = 'max-h-full'; // Tailwind CSS class cho chiều cao tối đa 
         <h3 class="text-xl font-semibold hidden sm:block">Danh sách Sản phẩm</h3>
 
         <form action="" method="GET" class="flex-1 max-w-lg">
-            <!-- <input type="hidden" name="controller" value="admin">
-            <input type="hidden" name="action" value="products"> -->
+            <input type="hidden" name="controller" value="admin">
+            <input type="hidden" name="action" value="products">
             <input type="text" name="search" placeholder="Tìm kiếm theo tên sản phẩm..."
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
                 value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">

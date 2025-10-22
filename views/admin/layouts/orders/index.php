@@ -1,8 +1,6 @@
 <?php
 // views/admin/orders/index.php (Sử dụng Modal và AJAX)
 
-// --- PHP FUNCTIONS ---
-
 function format_currency($amount)
 {
     $amount = is_numeric($amount) ? $amount : 0;
@@ -83,7 +81,8 @@ function get_status_classes($status)
                         <?php foreach ($orders as $order): ?>
                             <tr class="hover:bg-gray-50 transition duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-amber-600">
-                                    #<?= htmlspecialchars($order['id']) ?></td>
+                                    <?= htmlspecialchars($order['id']) ?>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                     <?= htmlspecialchars($order['customer_name'] ?? 'Khách lẻ') ?>
                                 </td>
@@ -119,7 +118,7 @@ function get_status_classes($status)
 
     <!-- Form update status -->
     <div id="updateStatusModal"
-        class="flex inset-0 bg-opacity-75 hidden items-center justify-center z-50 transition-opacity duration-500 opacity-0">
+        class="absolute flex inset-0 bg-opacity-75 hidden items-center justify-center z-50 transition-opacity duration-500 opacity-0">
         <div
             class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 transform transition-transform duration-300 scale-95">
             <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Cập nhật Đơn hàng <span id="modalOrderId"

@@ -35,11 +35,6 @@ class AuthController extends BaseController
         $password = $_POST['password'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
 
-        // 1. Xác thực (Validation)
-        // if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
-        //     $_SESSION['error'] = 'Vui lòng điền đầy đủ thông tin.';
-        //     return $this->redirect('?controller=auth&action=showRegistorForm');
-        // }
         if ($password !== $confirmPassword) {
             $_SESSION['error'] = 'Mật khẩu xác nhận không khớp.';
             $_SESSION['old_input'] = [
@@ -69,14 +64,13 @@ class AuthController extends BaseController
             return $this->redirect('?controller=auth&action=showRegisterForm');
         }
 
-        // 2. Xử lý nghiệp vụ: Tạo User và lấy OTP
-        // Chú ý: Hàm này phải hash password trước khi lưu
+        // Tạo User và lấy OTP
         $otp = $this->userModel->createNewUser($name, $email, $password);
 
-        // 3. Lưu thông tin email đang chờ xác thực vào session
+        // Lưu thông tin email đang chờ xác thực vào session
         $_SESSION['verify_email'] = $email;
 
-        // 4. Gửi OTP (Sử dụng try-catch để xử lý lỗi gửi mail)
+        // Gửi OTP
         try {
             $this->sendEmail($email, "Mã xác thực OTP", $otp);
         } catch (Exception $e) {
@@ -188,7 +182,6 @@ class AuthController extends BaseController
             }
 
             // 1B. KIỂM TRA CREDENTIALS (Mật khẩu)
-            // Gọi hàm kiểm tra mật khẩu (Giả định findByCredentials() sẽ kiểm tra hash)
             $authenticatedUser = $this->userModel->findByCredentials($email, $password);
 
             if ($authenticatedUser) {
@@ -205,11 +198,6 @@ class AuthController extends BaseController
                     return $this->redirect('?controller=home');
                 }
             }
-
-            // Nếu $authenticatedUser là NULL (sai mật khẩu)
-            // ----------------------------------------------------------------------
-            // PHÂN TÍCH TRƯỜNG HỢP 2: TÀI KHOẢN KHÔNG TỒN TẠI HOẶC SAI MẬT KHẨU
-            // ----------------------------------------------------------------------
 
             // Lỗi chung cho cả user không tồn tại và sai mật khẩu để tránh dò tìm email
             $_SESSION['error'] = 'Email hoặc mật khẩu không đúng.';
@@ -236,7 +224,6 @@ class AuthController extends BaseController
         // Hủy session
         session_destroy();
 
-        // Đặt thông báo thành công (sẽ mất ngay sau chuyển hướng nếu không dùng session)
         // Nên đặt session_start() ngay sau session_destroy() nếu muốn giữ lại thông báo này
         if (session_status() == PHP_SESSION_NONE) {
             session_start();

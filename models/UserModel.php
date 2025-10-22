@@ -124,4 +124,22 @@ class UserModel extends BaseModel
         $this->executeQuery($sql);
         return $otp;
     }
+
+    // Lấy số lượng người dùng mới
+    public function getTotalNewUsers(): int
+    {
+        $sql = "
+            SELECT 
+                COUNT(id) AS total_users 
+            FROM 
+                users 
+        ";
+        
+        $stmt = $this->db->query($sql);
+        
+        $result = $stmt->fetch_assoc();
+        
+        // Trả về tổng số người dùng (0 nếu không có kết quả)
+        return (int)($result['total_users'] ?? 0);
+    }
 }

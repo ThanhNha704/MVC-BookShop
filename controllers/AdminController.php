@@ -5,8 +5,7 @@ class AdminController extends BaseController
 {
     private $productModel;
     private $orderModel;
-    private $userModel; // Thêm userModel để quản lý users/nhân viên
-    // ... Khai báo các Models khác
+    private $userModel;
 
     public function __construct()
     {
@@ -26,52 +25,49 @@ class AdminController extends BaseController
         $this->productModel = new ProductModel();
         $this->loadModel('OrderModel');
         $this->orderModel = new OrderModel();
+        $this->loadModel('UserModel');
+        $this->userModel = new UserModel();
     }
-    /**
-     * Hiển thị trang Dashboard Tổng quan
-     */
+    // Hiển thị trang Dashboard Tổng quan
     public function index()
     {
-        // Giả lập dữ liệu thống kê
+        // $orderModel = new OrderModel();
+        $totalOrders = $this->orderModel->getTotalOrderCount();
+        $totalRevenue = $this->orderModel->getTotalRevenue();
+        $totalNewUser = $this->userModel->getTotalNewUsers();
+
+        // Lấy dữ liệu của order
+        $order = $this->orderModel->getAllOrdersWithUserDetails();
+
         $data = [
-            'totalProducts' => 150,
-            'totalOrders' => 45,
-            'newUsers' => 12,
-            'bestSeller' => "Harry Potter 7",
-            'worstSeller' => "Tự truyện G.G.",
-            'revenueData' => [],
+            'totalRevenue' => $totalRevenue,
+            'totalOrders' => $totalOrders,
+            'newUsers' => $totalNewUser,
+            'recentOrders' => $order
         ];
 
-        // SỬA: Đảm bảo có tham số TRUE để dùng layout Admin
         return $this->view('index', $data, true);
     }
 
     // ----------------------------------------------------
-    // II. QUẢN LÝ SẢN PHẨM (Yêu cầu 3)
+    // I. QUẢN LÝ SẢN PHẨM
     // ----------------------------------------------------
 
-    /**
-     * Hiển thị danh sách Sản phẩm (thêm, xóa, sửa)
-     */
+    // Hiển thị danh sách sản phẩm
     public function products()
     {
         $searchQuery = $_GET['search'] ?? '';
 
         if (!empty($searchQuery)) {
-            // Nếu có từ khóa tìm kiếm, gọi hàm tìm kiếm an toàn (getByName)
-            $products = $this->productModel->getByName($searchQuery);
+            $products = $this->productModel->getProductByName($searchQuery);
         } else {
-            // Nếu không có, lấy tất cả sản phẩm
             $products = $this->productModel->getAll('id, title, price, quantity, created_at', 'books');
         }
 
-        // Truyền dữ liệu vào View.
         return $this->view('layouts/products/index', ['products' => $products], true);
     }
 
-    /**
-     * Hiển thị form Thêm Sản phẩm
-     */
+    // Thêm sản phẩm
     public function addProduct()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -82,43 +78,100 @@ class AdminController extends BaseController
         return $this->view('admin/products/add', [], true);
     }
 
-    /**
-     * Xử lý Sửa Sản phẩm
-     */
+    // edit sản phẩm
     public function editProduct()
     {
-        $id = $_GET['id'] ?? null;
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Logic xử lý cập nhật sản phẩm
-            $_SESSION['success'] = "Cập nhật sản phẩm thành công.";
-            return $this->redirect('/admin/products');
+        $productId = $_GET['id'] ?? null;
+
+        if (!$productId || !is_numeric($productId)) {
+            header('Location: ?controller=admin&action=products');
+            exit;
         }
-        return $this->view('layouts/products/edit', ['product' => []], true);
+
+        $product = $this->productModel->getProductById((int) $productId);
+
+        if (!$product) {
+            $_SESSION['error'] = "Không tìm thấy sản phẩm có ID: {$productId}.";
+            header('Location: ?controller=admin&action=products');
+            exit;
+        }
+
+        $data = [
+            'product' => $product,
+            'page_title' => 'Sửa Sản phẩm',
+            'current_controller' => 'admin',
+            'current_action' => 'products'
+        ];
+
+        $this->view('layouts/products/edit', $data, true);
+    }
+
+    public function updateProduct()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['error'] = "Phương thức không hợp lệ.";
+            return $this->redirect('?controller=admin&action=products');
+        }
+
+        $productId = $_POST['id'] ?? null;
+        if (!$productId) {
+            $_SESSION['error'] = "ID sản phẩm không hợp lệ.";
+            return $this->redirect('?controller=admin&action=products');
+        }
+
+        // Thu thập dữ liệu từ form
+        $productData = [
+            'title' => $_POST['title'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'price' => $_POST['price'] ?? 0,
+            'quantity' => $_POST['quantity'] ?? 0,
+            'category_id' => $_POST['category_id'] ?? null,
+            'author' => $_POST['author'] ?? ''
+        ];
+
+        // Xử lý upload ảnh mới nếu có
+        if (!empty($_FILES['image']['name'])) {
+            $uploadDir = 'public/products/';
+            $fileName = time() . '_' . basename($_FILES['image']['name']);
+            $targetFile = $uploadDir . $fileName;
+
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+                $productData['image'] = $fileName;
+            } else {
+                $_SESSION['error'] = "Không thể upload ảnh.";
+                return $this->redirect("?controller=admin&action=editProduct&id={$productId}");
+            }
+        }
+
+        // Cập nhật sản phẩm
+        if ($this->productModel->updateProduct($productId, $productData)) {
+            $_SESSION['success'] = "Cập nhật sản phẩm thành công.";
+        } else {
+            $_SESSION['error'] = "Có lỗi xảy ra khi cập nhật sản phẩm.";
+        }
+
+        return $this->redirect('?controller=admin&action=products');
     }
 
     // ----------------------------------------------------
-    // III. QUẢN LÝ ĐƠN HÀNG (Yêu cầu 5, 6)
+    // VII. QUẢN LÝ ĐƠN HÀNG (Yêu cầu 5, 6)
     // ----------------------------------------------------
 
-    /**
-     * Hiển thị danh sách Đơn hàng (sửa trạng thái)
-     */
+    //  Hiển thị danh sách Đơn hàng (sửa trạng thái)
     public function orders()
     {
         $searchId = $_GET['search'] ?? null;
-        
-        // Gọi hàm getAllOrdersWithUserDetails (đã được sửa trong OrderModel)
+
         $orders = $this->orderModel->getAllOrdersWithUserDetails($searchId);
-        
-        // Giả định view nằm ở 'admin/orders/index'
+
         $data = [
             'orders' => $orders,
-            'statuses' => OrderModel::STATUSES // Truyền trạng thái để dùng trong dropdown
+            'statuses' => OrderModel::STATUSES
         ];
-        
-        return $this->view('layouts/orders/index', $data, true); 
+
+        return $this->view('layouts/orders/index', $data, true);
     }
-    
+
     /**
      * Xử lý cập nhật trạng thái đơn hàng
      */
@@ -126,16 +179,16 @@ class AdminController extends BaseController
     {
         // Đặt header để trình duyệt hiểu đây là JSON
         header('Content-Type: application/json');
-        
+
         $response = ['success' => false, 'message' => ''];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $orderId = $_POST['order_id'] ?? null;
             $newStatus = $_POST['status'] ?? null;
-            
+
             if ($orderId && $newStatus) {
                 // Giả định $this->orderModel là đối tượng Model đã được khởi tạo
-                if ($this->orderModel->updateStatus($orderId, $newStatus)) { 
+                if ($this->orderModel->updateStatus($orderId, $newStatus)) {
                     $response['success'] = true;
                     $response['message'] = "Cập nhật trạng thái đơn hàng #$orderId thành công.";
                 } else {
@@ -153,36 +206,58 @@ class AdminController extends BaseController
         exit; // Quan trọng: Dừng script để không tải thêm nội dung View nào khác
     }
 
-    
-    // ----------------------------------------------------
-    // IV. QUẢN LÝ NGƯỜI DÙNG & ĐÁNH GIÁ (Yêu cầu 7, 8)
-    // ----------------------------------------------------
-
-    /**
-     * Hiển thị danh sách Người dùng (Khách hàng & Nhân viên)
-     */
-    public function users()
+    // Xem chi tiết đơn hàng
+    public function viewOrderDetail()
     {
-        // Lấy danh sách người dùng (cột role trong DB: admin, user)
-        return $this->view('layouts/users/index', ['users' => []], true); // SỬA: Thêm TRUE
+        $orderId = $_GET['id'] ?? null;
+
+        if (!$orderId) {
+            // Nếu không có ID, chuyển hướng hoặc hiển thị lỗi
+            $this->redirect('admin/orders/index');
+            exit;
+        }
+
+        // Lấy dữ liệu chi tiết đơn hàng
+        $order = $this->orderModel->getOrderDetail($orderId);
+
+        if (!$order) {
+            // Nếu không tìm thấy đơn hàng, chuyển hướng hoặc hiển thị lỗi
+            $this->redirect('index.php?controller=admin&action=orders');
+            exit;
+        }
+
+        // Truyền dữ liệu sang View
+        $data = [
+            'order' => $order
+        ];
+        $this->view('layouts/orders/viewOrderDetail', $data, 'true');
     }
 
-    /**
-     * Hiển thị danh sách Đánh giá
-     */
+
+    // ----------------------------------------------------
+    // IV. QUẢN LÝ NGƯỜI DÙNG & ĐÁNH GIÁ
+    // ----------------------------------------------------
+
+    // Hiển thị danh sách Người dùng (Khách hàng & Nhân viên)
+    public function users()
+    {
+        return $this->view('layouts/users/index', ['users' => []], true);
+    }
+
+    //  Hiển thị danh sách Đánh giá
     public function reviews()
     {
         // Lấy danh sách các đánh giá của sản phẩm
-        return $this->view('layouts/users/reviews', ['reviews' => []], true); // SỬA: Thêm TRUE
+        return $this->view('layouts/users/reviews', ['reviews' => []], true);
     }
 
+
     // ----------------------------------------------------
-    // V. KHUYẾN MÃI & BÁO CÁO (Yêu cầu 11, 12)
+    // V. KHUYẾN MÃI & BÁO CÁO
     // ----------------------------------------------------
 
-    /**
-     * Hiển thị Quản lý Voucher & Khuyến mãi (số lượng, thời hạn)
-     */
+
+    // Hiển thị Quản lý Voucher & Khuyến mãi (số lượng, thời hạn)
     public function vouchers()
     {
         // Quản lý tạo/sửa/xóa voucher và khuyến mãi sản phẩm
