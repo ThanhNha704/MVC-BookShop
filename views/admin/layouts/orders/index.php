@@ -157,6 +157,7 @@ function get_status_classes($status)
         </div>
     </div>
 </div>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('updateStatusModal');

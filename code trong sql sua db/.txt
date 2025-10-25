@@ -1,0 +1,1 @@
+1. chạy delivery_addresses.sql trong mysql, thêm thông tin

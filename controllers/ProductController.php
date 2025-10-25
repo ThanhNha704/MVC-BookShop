@@ -7,18 +7,18 @@ class ProductController extends BaseController
     {
         // Gọi model để lấy dữ liệu sản phẩm hiển thị ở trang chủ
         $this->loadModel('ProductModel');
-        $this->productModel = new ProductModel(); 
+        $this->productModel = new ProductModel();
     }
     public function index()
     {
-        $products = $this->productModel->getAll('*', 'books');
+        $products = $this->productModel->getProduct('*', 'books', 'is_visible = 1');
         return $this->view('layouts/products/index', ['books' => $products]);
     }
 
     public function show($id)
     {
         // Sửa lỗi: Dùng getBookById mới, và dùng $this->view
-        $product = $this->productModel->getBookById($id);
+        $product = $this->productModel->getProductById($id);
         return $this->view('components/BookDetail', ['book' => $product]);
     }
 
@@ -29,33 +29,27 @@ class ProductController extends BaseController
         $keyword = htmlspecialchars(trim($keyword));
 
         // 2. Gọi Model để tìm kiếm (dùng phương thức getByName đã sửa trong Model)
-        $results = $this->productModel->getByName($keyword);
+        $results = $this->productModel->getProductByName($keyword);
 
         return $this->view('layouts/products/index', ['books' => $results]);
     }
 
-    public function getById($id)
-    {
-        // Sửa lỗi: Dùng getBookById mới
-        $product = $this->productModel->getBookById($id);
-        // Lưu ý: Nếu đây là hàm API, bạn cần echo JSON. Nếu không, hàm này có thể dư thừa.
-    }
 
     public function details()
     {
         $id = $_GET['id'] ?? null;
-    if ($id === null) {
-        return;
+        if ($id === null) {
+            return;
         }
 
         // Sửa lỗi: Dùng getBookById mới
-        $product = $this->productModel->getBookById($id);
-        
+        $product = $this->productModel->getProductById($id);
+
         if (!$product) {
             // Xử lý không tìm thấy sách
             return;
         }
 
-        return $this->view('components/BookDetail', ['book'=>$product]);
+        return $this->view('components/BookDetail',  ['book'=>$product]);
     }
 }

@@ -88,6 +88,21 @@ function get_status_classes($status)
                         <dd class="font-extrabold text-2xl text-green-600"><?= format_currency($order['total']) ?></dd>
                     </div>
 
+                    <div class="col-span-2 mt-4 pt-4 border-t">
+                        <dt class="font-medium text-gray-500 mb-2">Thông tin giao hàng:</dt>
+                        <dd class="text-gray-900">
+                            <p class="font-medium"><?= htmlspecialchars($order['recipient_full_name']) ?></p>
+                            <p>SĐT: <?= htmlspecialchars($order['phone_number']) ?></p>
+                            <p class="mt-1">
+                                <span>Địa chỉ: </span>
+                                <?= htmlspecialchars($order['address_line']) ?>,
+                                <?= htmlspecialchars($order['ward']) ?>,
+                                <?= htmlspecialchars($order['district']) ?>,
+                                <?= htmlspecialchars($order['city']) ?>
+                            </p>
+                        </dd>
+                    </div>
+
                 </dl>
             </div>
 

@@ -1,5 +1,5 @@
 <?php 
-$item = $data['book'];
+$item = $data['book'][0];
 $current_price = $item['price'] * (100 - $item['discount']) / 100;
 ?>
 <section class="container mx-auto py-10 px-4 md:px-0">

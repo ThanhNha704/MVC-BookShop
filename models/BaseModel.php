@@ -70,16 +70,24 @@ class BaseModel extends Database
 
     protected function execute_query(string $sql)
     {
-        // Trong MySQLi, query() được dùng cho cả SELECT và Non-SELECT
-        return $this->db->query($sql);
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            // Log lỗi SQL chi tiết nếu INSERT/UPDATE thất bại
+            error_log("Lỗi SQL: " . $this->db->error . " | SQL: " . $sql);
+        }
+        return $result;
     }
 
 
     // Lấy tất cả bản ghi từ bảng (Giữ nguyên logic của bạn)
-    public function getAll($selectFields = '*', $table = '', $orderBy = '', $limit = '')
+    public function getProduct($selectFields = '*', $table = '', $where = '', $orderBy = '', $limit = '')
     {
         // ... (Logic cũ của bạn, đã hoạt động với $this->db->query($sql)) ...
         $sql = "SELECT $selectFields FROM $table";
+        if (!empty($where)) {
+            $sql .= " WHERE $where";
+        }
         if (!empty($orderBy)) {
             $sql .= " ORDER BY $orderBy";
         }
@@ -115,7 +123,7 @@ class BaseModel extends Database
     // Tìm kiếm theo tên
     public function getByName(string $table, string $column, string $value): array
     {
-        $value = $this->db->real_escape_string($value);
+        // $value = $this->db->real_escape_string($value);
 
         $sql = "SELECT * FROM {$table} WHERE {$column} LIKE '%{$value}%'";
 

@@ -103,6 +103,7 @@ class AuthController extends BaseController
 
         $email = $_SESSION['verify_email'];
         $otp_code = $_POST['otp_code'] ?? '';
+      
 
         if ($this->userModel->verifyUserOtp($email, $otp_code)) {
             // Xác thực thành công
@@ -139,6 +140,54 @@ class AuthController extends BaseController
 
         // 3. Chuyển hướng về trang xác thực
         return $this->redirect('?controller=auth&action=showVerifyOtpForm');
+    }
+
+    // ------------------------- QUÊN MẬT KHẨU (forgotpassword) -------------------------
+    public function showForgotPasswordForm()
+    {
+        return $this->view('/auth/ForgotPassword');
+    }
+
+    // Xử lý gửi yêu cầu quên mật khẩu: tạo OTP và gửi email nếu email tồn tại
+    public function sendForgotPassword()
+    {
+        $email = trim($_POST['email'] ?? '');
+        if (empty($email)) {
+            $_SESSION['error'] = 'Vui lòng nhập email.';
+            return $this->redirect('?controller=auth&action=showForgotPasswordForm');
+        }
+
+        $user = $this->userModel->findByEmail($email);
+
+        if (!$user) {
+            // Để tránh dò tìm email, vẫn hiển thị thông báo thành công chung
+            $_SESSION['success'] = 'Nếu email tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.';
+            return $this->redirect('?controller=auth&action=showLoginForm');
+        }
+
+        // Tạo mật khẩu mới ngẫu nhiên
+        $newPassword = bin2hex(random_bytes(4)); // 8 hex chars ~ 8 chars password
+
+        // Cập nhật mật khẩu mới (đã hash) trong DB
+        $updated = $this->userModel->updatePasswordByEmail($email, $newPassword);
+
+        if (!$updated) {
+            error_log("Không thể cập nhật mật khẩu cho email: $email");
+            $_SESSION['error'] = 'Đã xảy ra lỗi nội bộ. Vui lòng thử lại sau.';
+            return $this->redirect('?controller=auth&action=showForgotPasswordForm');
+        }
+
+        try {
+            // Gửi mật khẩu mới tới email người dùng
+            $this->sendPasswordResetEmail($email, $newPassword);
+            $_SESSION['success'] = 'Mật khẩu mới đã được gửi tới email của bạn. Vui lòng kiểm tra hộp thư.';
+        } catch (Exception $e) {
+            error_log("Lỗi gửi mail (forgot password): " . $e->getMessage());
+            $_SESSION['error'] = 'Không thể gửi email. Vui lòng thử lại sau.';
+            return $this->redirect('?controller=auth&action=showForgotPasswordForm');
+        }
+
+        return $this->redirect('?controller=auth&action=showLoginForm');
     }
 
     // ------------------------- ĐĂNG NHẬP (Login) -------------------------
@@ -237,6 +286,42 @@ class AuthController extends BaseController
     // ----------------------------------------------------------------------
     // PHƯƠNG THỨC GỬI EMAIL (PHPMailer)
     // ----------------------------------------------------------------------
+
+    // Gửi email thông báo mật khẩu mới
+    private function sendPasswordResetEmail($to, $newPassword)
+    {
+        $mailer = new PHPMailer(true);
+
+        try {
+            // Cấu hình SMTP
+            $mailer->isSMTP();
+            $mailer->Host = 'smtp.gmail.com'; // Sửa host nếu cần
+            $mailer->SMTPAuth = true;
+            $mailer->Username = 'truongnha474@gmail.com';
+            // QUAN TRỌNG: Thay bằng MẬT KHẨU ỨNG DỤNG của Gmail
+            $mailer->Password = 'gmsn nejc dtko rhec';
+            $mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mailer->Port = 465;
+            $mailer->CharSet = 'UTF-8';
+
+            // Thiết lập người gửi và người nhận
+            $mailer->setFrom('no-reply@bookshop.com', 'BookShop Hỗ trợ');
+            $mailer->addAddress($to);
+
+            // Thiết lập nội dung Email
+            $mailer->isHTML(true);
+            $mailer->Subject = 'Mật khẩu mới cho tài khoản BookShop';
+            $mailer->Body = "<h2>Mật khẩu mới</h2>" .
+                "<p>Mật khẩu mới của bạn là: <strong style='font-size:1.1em;'>$newPassword</strong></p>" .
+                "<p>Vui lòng đăng nhập và đổi mật khẩu ngay sau khi đăng nhập để bảo mật tài khoản.</p>";
+            $mailer->AltBody = "Mật khẩu mới của bạn là: $newPassword";
+
+            $mailer->send();
+
+        } catch (Exception $e) {
+            throw new Exception('Lỗi gửi mail: ' . $mailer->ErrorInfo);
+        }
+    }
 
     private function sendEmail($to, $subject, $otp_code)
     {

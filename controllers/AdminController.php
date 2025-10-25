@@ -61,7 +61,7 @@ class AdminController extends BaseController
         if (!empty($searchQuery)) {
             $products = $this->productModel->getProductByName($searchQuery);
         } else {
-            $products = $this->productModel->getAll('id, title, price, quantity, created_at', 'books');
+            $products = $this->productModel->getProduct('*', 'books');
         }
 
         return $this->view('layouts/products/index', ['products' => $products], true);
@@ -106,6 +106,37 @@ class AdminController extends BaseController
         $this->view('layouts/products/edit', $data, true);
     }
 
+    public function toggleProductStatus()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['error'] = "Phương thức không hợp lệ.";
+            return $this->redirect('?controller=admin&action=products');
+        }
+
+        $productId = $_POST['product_id'] ?? null;
+        $action = $_POST['is_visible'] ?? '';
+
+        if (!$productId || !in_array($action, ['show', 'hide'])) {
+            $_SESSION['error'] = "Dữ liệu không hợp lệ.";
+            return $this->redirect('?controller=admin&action=products');
+        }
+
+        // Kiểm tra đơn hàng đang giao khi cố gắng ẩn sản phẩm
+        if ($action === 'hide' && $this->productModel->hasActiveOrders($productId)) {
+            $_SESSION['error'] = "Không thể ẩn sản phẩm này vì đang có đơn hàng đang giao.";
+            return $this->redirect('?controller=admin&action=products');
+        }
+
+        $isVisible = $action === 'show';
+        if ($this->productModel->updateProduct($productId, ['is_visible' => $isVisible ? 1 : 0])) {
+            $_SESSION['success'] = $isVisible ? "Đã hiện sản phẩm." : "Đã ẩn sản phẩm.";
+        } else {
+            $_SESSION['error'] = "Không thể cập nhật trạng thái sản phẩm.";
+        }
+
+        return $this->redirect('?controller=admin&action=products');
+    }
+
     public function updateProduct()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -122,17 +153,18 @@ class AdminController extends BaseController
         // Thu thập dữ liệu từ form
         $productData = [
             'title' => $_POST['title'] ?? '',
-            'description' => $_POST['description'] ?? '',
+            'author' => $_POST['author'] ?? '',
             'price' => $_POST['price'] ?? 0,
+            'discount' => $_POST['discount'],
+            'description' => $_POST['description'] ?? '',
             'quantity' => $_POST['quantity'] ?? 0,
-            'category_id' => $_POST['category_id'] ?? null,
-            'author' => $_POST['author'] ?? ''
+            'is_visible' => $_POST['is_visible']
         ];
 
         // Xử lý upload ảnh mới nếu có
         if (!empty($_FILES['image']['name'])) {
             $uploadDir = 'public/products/';
-            $fileName = time() . '_' . basename($_FILES['image']['name']);
+            $fileName = str_replace(' ', '_', $_POST['title']) . '_' . basename($_FILES['image']['name']);
             $targetFile = $uploadDir . $fileName;
 
             if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
@@ -241,7 +273,84 @@ class AdminController extends BaseController
     // Hiển thị danh sách Người dùng (Khách hàng & Nhân viên)
     public function users()
     {
-        return $this->view('layouts/users/index', ['users' => []], true);
+        $users = $this->userModel->getAllUsers();
+        return $this->view('layouts/users/index', [
+            'users' => $users,
+            'statusLabels' => UserModel::$STATUS_LABELS
+        ], true);
+    }
+
+    // Xem chi tiết người dùng
+    public function viewUser()
+    {
+        $userId = $_GET['id'] ?? null;
+        if (!$userId) {
+            $_SESSION['error'] = "ID người dùng không hợp lệ.";
+            return $this->redirect('?controller=admin&action=users');
+        }
+
+        $user = $this->userModel->getUserById($userId);
+        if (!$user) {
+            $_SESSION['error'] = "Không tìm thấy người dùng.";
+            return $this->redirect('?controller=admin&action=users');
+        }
+
+        // Nếu model trả về addresses bên trong user, tách ra để view dùng trực tiếp
+        $addresses = $user['addresses'] ?? [];
+
+        // Thiết lập thông tin liên hệ chính (lấy address mặc định nếu có, hoặc lấy phần tử đầu)
+        if (!empty($addresses)) {
+            $primary = null;
+            foreach ($addresses as $addr) {
+                if (!empty($addr['is_default'])) {
+                    $primary = $addr;
+                    break;
+                }
+            }
+            if ($primary === null) {
+                $primary = $addresses[0];
+            }
+
+            // Gán số điện thoại và địa chỉ gọn vào $user để view hiển thị thuận tiện
+            $user['phone'] = $primary['phone_number'] ?? $user['phone'] ?? null;
+            $user['address'] = (
+                ($primary['address_line'] ?? '') .
+                (!empty($primary['ward']) ? ', ' . $primary['ward'] : '') .
+                (!empty($primary['district']) ? ', ' . $primary['district'] : '') .
+                (!empty($primary['city']) ? ', ' . $primary['city'] : '')
+            );
+        }
+
+        return $this->view('layouts/users/view', [
+            'user' => $user,
+            'addresses' => $addresses,
+            'statusLabels' => UserModel::$STATUS_LABELS
+        ], true);
+    }
+
+    // Cập nhật trạng thái người dùng
+    public function updateUserStatus()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['error'] = "Phương thức không hợp lệ.";
+            return $this->redirect('?controller=admin&action=users');
+        }
+
+        $userId = $_POST['user_id'] ?? null;
+        $newStatus = $_POST['status'] ?? null;
+
+        if (!$userId || !isset($newStatus)) {
+            $_SESSION['error'] = "Thiếu thông tin cần thiết.";
+            return $this->redirect('?controller=admin&action=users');
+        }
+
+        if ($this->userModel->updateUserStatus($userId, $newStatus)) {
+            $_SESSION['success'] = "Cập nhật trạng thái thành công.";
+        } else {
+            $_SESSION['error'] = "Không thể cập nhật trạng thái." . $userId . $newStatus;
+        }
+
+        return $this->redirect('?controller=admin&action=users');
     }
 
     //  Hiển thị danh sách Đánh giá
@@ -251,11 +360,9 @@ class AdminController extends BaseController
         return $this->view('layouts/users/reviews', ['reviews' => []], true);
     }
 
-
     // ----------------------------------------------------
     // V. KHUYẾN MÃI & BÁO CÁO
     // ----------------------------------------------------
-
 
     // Hiển thị Quản lý Voucher & Khuyến mãi (số lượng, thời hạn)
     public function vouchers()
@@ -264,9 +371,7 @@ class AdminController extends BaseController
         return $this->view('layouts/vouchers/index', ['vouchers' => []], true); // Giữ nguyên TRUE
     }
 
-    /**
-     * Hiển thị Báo cáo Doanh thu chi tiết (tuần, tháng, năm)
-     */
+    // Hiển thị Báo cáo Doanh thu chi tiết (tuần, tháng, năm)
     public function revenue()
     {
         // Lấy dữ liệu doanh thu chi tiết

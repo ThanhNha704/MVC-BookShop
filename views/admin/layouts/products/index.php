@@ -11,9 +11,9 @@ if (!function_exists('format_currency')) {
 
 // Lấy dữ liệu sản phẩm. Nếu không có, gán mảng rỗng.
 $listProduct = $data['products'] ?? [];
-
+// print_r($listProduct);
 // Thiết lập chiều cao cho khu vực cuộn
-$tableMaxHeight = 'max-h-full'; 
+$tableMaxHeight = 'max-h-full';
 ?>
 
 <div class="flex-1 bg-white p-6">
@@ -22,13 +22,20 @@ $tableMaxHeight = 'max-h-full';
     <div class="flex justify-between items-center mb-4 gap-4">
         <h3 class="text-xl font-semibold hidden sm:block">Danh sách Sản phẩm</h3>
 
-        <form action="" method="GET" class="flex-1 max-w-lg">
-            <input type="hidden" name="controller" value="admin">
-            <input type="hidden" name="action" value="products">
-            <input type="text" name="search" placeholder="Tìm kiếm theo tên sản phẩm..."
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
-                value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-        </form>
+        <div class="flex-1 max-w-lg relative">
+            <form action="" method="GET" id="searchForm">
+                <input type="hidden" name="controller" value="admin">
+                <input type="hidden" name="action" value="products">
+                <input type="text" 
+                       name="search" 
+                       id="searchInput"
+                       placeholder="Tìm kiếm theo tên sản phẩm..."
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
+                       value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
+                       autocomplete="off">
+            </form>
+            <div id="searchSuggestions" class="absolute w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50 max-h-60 overflow-y-auto"></div>
+        </div>
 
         <a href="?controller=admin&action=addProduct"
             class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors whitespace-nowrap">
@@ -75,9 +82,20 @@ $tableMaxHeight = 'max-h-full';
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="?controller=admin&action=editProduct&id=<?= $product['id'] ?>"
                                     class="text-indigo-600 hover:text-indigo-900 mr-3">Sửa</a>
-                                <a href="?controller=admin&action=deleteProduct&id=<?= $product['id'] ?>"
-                                    class="text-red-600 hover:text-red-900"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</a>
+                                <form action="?controller=admin&action=toggleProductStatus" method="POST" class="inline">
+                                    <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                    <?php if ($product['is_visible'] ?? true): ?>
+                                        <button type="submit" name="is_visible" value="hide"
+                                            class="text-amber-600 hover:text-amber-900">
+                                            Ẩn
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="submit" name="is_visible" value="show"
+                                            class="text-green-600 hover:text-green-900">
+                                            Hiện
+                                        </button>
+                                    <?php endif; ?>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -85,4 +103,5 @@ $tableMaxHeight = 'max-h-full';
             </tbody>
         </table>
     </div>
+</div>
 </div>

@@ -23,9 +23,10 @@ class HomeController extends BaseController
             }
         }
         // Lấy tất cả sản phẩm.
-        $products = $this->productModel->getAll(
+        $products = $this->productModel->getProduct(
             '*',
             'books', // Tên bảng
+            '',
             'sold DESC'
         );
 

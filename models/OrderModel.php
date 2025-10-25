@@ -15,7 +15,7 @@ class OrderModel extends BaseModel
     {
         // Vệ sinh đầu vào thô (chỉ chấp nhận số)
         $where = '';
-        if (!empty($searchId) && is_numeric($searchId)) {
+        if (!empty($searchId)) {
             $safeSearchId = intval($searchId);
             $where = " WHERE o.id = $safeSearchId";
         }
@@ -28,9 +28,9 @@ class OrderModel extends BaseModel
                     u.username as customer_name
                 FROM orders o 
                 JOIN users u ON o.user_id = u.id" . $where .
-              " ORDER BY o.created_at DESC";
+            " ORDER BY o.created_at DESC";
 
-        $result = $this->db->query($sql);
+        $result = $this->execute_query($sql);
 
         if (!$result) {
             return [];
@@ -41,7 +41,7 @@ class OrderModel extends BaseModel
         while ($row = $result->fetch_assoc()) {
             $data[] = $row;
         }
-        
+
         $result->free(); // Giải phóng kết quả
         return $data;
     }
@@ -58,32 +58,30 @@ class OrderModel extends BaseModel
         // Bắt buộc phải bọc $safeStatus bằng dấu nháy đơn
         $query = "UPDATE " . $this->table . " SET status = '$safeStatus' WHERE id = $safeOrderId";
 
-        $result = $this->db->query($query);
+        $result = $this->execute_query($query);
 
         if (!$result) {
             return false;
         }
 
-        return true; // Trả về true/false thay vì đối tượng $result cho hàm UPDATE
+        return true;
     }
 
-    // -------------------------------------------------------------------
-    // HÀM getOrderDetail ĐƠN GIẢN HÓA (Dùng MySQLi Query Thô)
-    // -------------------------------------------------------------------
     public function getOrderDetail($orderId)
     {
-        $safeOrderId = intval($orderId);
-
         // 1. Lấy thông tin chính
         $sqlOrder = "SELECT 
                           o.id, o.user_id, o.total, o.status, o.created_at,
-                          u.username AS customer_name, u.email
+                          o.delivery_address_id,
+                          u.username AS customer_name, u.email,
+                          da.recipient_full_name, da.phone_number, da.address_line,
+                          da.ward, da.district, da.city
                       FROM orders o
                       JOIN users u ON o.user_id = u.id
-                      WHERE o.id = $safeOrderId LIMIT 1";
+                      JOIN delivery_addresses da ON o.delivery_address_id = da.id
+                      WHERE o.id = $orderId LIMIT 1";
 
-        $resultOrder = $this->db->query($sqlOrder);
-
+        $resultOrder = $this->execute_query($sqlOrder);
         if (!$resultOrder || $resultOrder->num_rows === 0) {
             return null;
         }
@@ -93,13 +91,12 @@ class OrderModel extends BaseModel
 
         // 2. Lấy chi tiết các sản phẩm
         $sqlDetails = "SELECT 
-                          od.book_id, od.quantity, od.price,
+                          oi.book_id, oi.quantity, oi.price,
                           b.title AS book_title, b.author AS book_author
-                        FROM order_details od
-                        JOIN books b ON od.book_id = b.id
-                        WHERE od.order_id = $safeOrderId";
-
-        $resultDetails = $this->db->query($sqlDetails);
+                        FROM order_items oi
+                        JOIN books b ON oi.book_id = b.id
+                        WHERE oi.order_id = $orderId";
+        $resultDetails = $this->execute_query($sqlDetails);
 
         $details = [];
         if ($resultDetails) {
@@ -119,10 +116,11 @@ class OrderModel extends BaseModel
     {
         $sql = "SELECT COUNT(id) AS total_count FROM orders";
 
-        $result = $this->db->query($sql);
+        $result = $this->execute_query($sql);
 
-        if (!$result) return 0;
-        
+        if (!$result)
+            return 0;
+
         $row = $result->fetch_assoc();
         $result->free();
 
@@ -133,7 +131,7 @@ class OrderModel extends BaseModel
     public function getTotalRevenue(?string $startDate = null, ?string $endDate = null): float
     {
         $sql = "SELECT SUM(total) AS total_revenue FROM orders WHERE status = 'Thành công' ";
-        
+
         // Nối chuỗi thời gian nếu có
         if ($startDate) {
             $sql .= " AND created_at >= '$startDate 00:00:00'";
@@ -141,25 +139,26 @@ class OrderModel extends BaseModel
         if ($endDate) {
             $sql .= " AND created_at <= '$endDate 23:59:59'";
         }
-        
-        $result = $this->db->query($sql);
 
-        if (!$result) return 0.0;
-        
+        $result = $this->execute_query($sql);
+
+        if (!$result)
+            return 0.0;
+
         $row = $result->fetch_assoc();
         $result->free();
 
         return (float) ($row['total_revenue'] ?? 0.0);
     }
-    
+
     /**
      * Tính tổng số lượng người dùng mới trong tháng hiện tại.
      */
     public function getTotalNewUsersInMonth(): int
     {
         $startDate = date('Y-m-01 00:00:00');
-        $endDate = date('Y-m-d 23:59:59'); 
-        
+        $endDate = date('Y-m-d 23:59:59');
+
         $sql = "
             SELECT 
                 COUNT(id) AS total_users 
@@ -168,15 +167,16 @@ class OrderModel extends BaseModel
             WHERE 
                 created_at >= '$startDate' AND created_at <= '$endDate'
         ";
-        
-        $result = $this->db->query($sql);
-        
-        if (!$result) return 0;
+
+        $result = $this->execute_query($sql);
+
+        if (!$result)
+            return 0;
 
         $row = $result->fetch_assoc();
         $result->free();
-        
-        return (int)($row['total_users'] ?? 0);
+
+        return (int) ($row['total_users'] ?? 0);
     }
 
 }
