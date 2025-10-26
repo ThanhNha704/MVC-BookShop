@@ -91,7 +91,7 @@ class UserModel extends BaseModel
                 AND TIMESTAMPDIFF(MINUTE, otp_expires_at, NOW()) < 5
                 LIMIT 1";
         $query = $this->execute_query($sql);
-echo 'dsfdsfsdfds';
+        echo 'dsfdsfsdfds';
         if ($query && $query->num_rows > 0) {
             $user = $query->fetch_assoc();
             $user_id = (int) $user['id'];
@@ -158,7 +158,7 @@ echo 'dsfdsfsdfds';
     public function getUserById(int $userId): ?array
     {
         // Làm sạch dữ liệu đầu vào
-        $userId = (int)$userId;
+        $userId = (int) $userId;
 
         // Lấy thông tin người dùng
         $sql = "SELECT u.*
@@ -175,19 +175,8 @@ echo 'dsfdsfsdfds';
         $user = $result->fetch_assoc();
         $result->free();
 
-        // Lấy danh sách địa chỉ của người dùng
-        $addressSql = "SELECT * FROM delivery_addresses 
-                      WHERE user_id = $userId 
-                      ORDER BY is_default DESC, created_at DESC";
-
-        $addressResult = $this->execute_query($addressSql);
-        
-        if ($addressResult) {
-            $user['addresses'] = $addressResult->fetch_all(MYSQLI_ASSOC);
-            $addressResult->free();
-        } else {
-            $user['addresses'] = [];
-        }
+        // Không truy vấn bảng delivery_addresses tại đây (đã chuyển sang nhập địa chỉ trực tiếp ở checkout)
+        $user['addresses'] = [];
 
         return $user;
     }
@@ -198,7 +187,69 @@ echo 'dsfdsfsdfds';
         $sql = "UPDATE {$this->table} 
                 SET status = $newStatus
                 WHERE id = $userId";
+        return (bool) $this->execute_query($sql);
+    }
 
+    // Lấy tất cả địa chỉ giao hàng của người dùng
+    public function getDeliveryAddresses($userId)
+    {
+        $userId = (int) $userId;
+        $sql = "SELECT * FROM delivery_addresses 
+                WHERE user_id = $userId 
+                ORDER BY is_default DESC, created_at DESC";
+
+        $result = $this->execute_query($sql);
+        if (!$result) {
+            return [];
+        }
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Thêm địa chỉ giao hàng mới
+    public function addDeliveryAddress($userId, $recipientName, $phone, $address, $isDefault = 0)
+    {
+        if ($isDefault) {
+            $this->unsetDefaultAddresses($userId);
+        }
+
+        $userId = (int) $userId;
+        $isDefault = (int) $isDefault;
+
+        // Làm sạch dữ liệu đầu vào
+        $recipientName = $this->db->real_escape_string($recipientName);
+        $phone = $this->db->real_escape_string($phone);
+        $address = $this->db->real_escape_string($address);
+
+        $sql = "INSERT INTO delivery_addresses (user_id, recipient_name, phone, address, is_default) 
+                VALUES ($userId, '$recipientName', '$phone', '$address', $isDefault)";
+
+        return (bool) $this->execute_query($sql);
+    }
+
+    // Lấy một địa chỉ giao hàng cụ thể
+    public function getDeliveryAddress($addressId, $userId)
+    {
+        $addressId = (int) $addressId;
+        $userId = (int) $userId;
+
+        $sql = "SELECT * FROM delivery_addresses 
+                WHERE id = $addressId AND user_id = $userId
+                LIMIT 1";
+
+        $result = $this->execute_query($sql);
+        if (!$result || $result->num_rows === 0) {
+            return null;
+        }
+
+        return $result->fetch_assoc();
+    }
+
+    // Bỏ đặt mặc định tất cả địa chỉ của người dùng
+    private function unsetDefaultAddresses($userId)
+    {
+        $userId = (int) $userId;
+        $sql = "UPDATE delivery_addresses SET is_default = 0 WHERE user_id = $userId";
         return (bool) $this->execute_query($sql);
     }
 

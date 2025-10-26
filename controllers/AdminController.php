@@ -71,11 +71,54 @@ class AdminController extends BaseController
     public function addProduct()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Logic xử lý thêm sản phẩm
-            $_SESSION['success'] = "Thêm sản phẩm thành công.";
-            return $this->redirect('/admin/products');
+            // Thu thập dữ liệu từ form
+            $productData = [
+                'title' => $_POST['title'] ?? '',
+                'author' => $_POST['author'] ?? '',
+                'price' => $_POST['price'] ?? 0,
+                'description' => $_POST['description'] ?? '',
+                'quantity' => $_POST['quantity'] ?? 0,
+                'discount' => $_POST['discount'] ?? 0,
+                'is_visible' => isset($_POST['is_visible']) ? 1 : 0
+            ];
+
+            // Kiểm tra dữ liệu bắt buộc
+            if (empty($productData['title']) || empty($productData['author']) || 
+                empty($productData['price']) || empty($productData['quantity'])) {
+                $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin bắt buộc.";
+                $_SESSION['old_input'] = $_POST;
+                return $this->redirect('?controller=admin&action=addProduct');
+            }
+
+            // Xử lý upload ảnh
+            if (!empty($_FILES['image']['name'])) {
+                $uploadDir = 'public/products/';
+                $fileName = str_replace(' ', '_', $productData['title']) . '_' . basename($_FILES['image']['name']);
+                $targetFile = $uploadDir . $fileName;
+
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+                    $productData['image'] = $fileName;
+                } else {
+                    $_SESSION['error'] = "Không thể upload ảnh.";
+                    $_SESSION['old_input'] = $_POST;
+                    return $this->redirect('?controller=admin&action=addProduct');
+                }
+            }
+
+            // Thêm sản phẩm vào database
+            $newProductId = $this->productModel->createProduct($productData);
+
+            if ($newProductId) {
+                $_SESSION['success'] = "Thêm sản phẩm thành công.";
+                return $this->redirect('?controller=admin&action=products');
+            } else {
+                $_SESSION['error'] = "Có lỗi xảy ra khi thêm sản phẩm.";
+                $_SESSION['old_input'] = $_POST;
+                return $this->redirect('?controller=admin&action=addProduct');
+            }
         }
-        return $this->view('admin/products/add', [], true);
+
+        return $this->view('layouts/products/add', [], true);
     }
 
     // edit sản phẩm

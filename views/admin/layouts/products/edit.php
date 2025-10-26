@@ -1,7 +1,6 @@
 <?php
 // views/admin/products/edit.php
-$value = $data['product'];
-$product = $value[0];
+$product = $data['product'];
 // print_r($product);
 
 function format_price($amount)

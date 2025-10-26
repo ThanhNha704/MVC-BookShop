@@ -14,18 +14,17 @@ $currentSearch = htmlspecialchars($_GET['search'] ?? '');
 // Bản đồ ánh xạ trạng thái sang Tailwind classes
 function get_status_classes($status)
 {
-    $status = strtolower($status);
-    if ($status === 'chờ xác nhận')
+    if ($status === 'Chờ xác nhận')
         return 'bg-yellow-100 text-yellow-800 border-yellow-400';
-    if ($status === 'xác nhận')
+    if ($status === 'Xác nhận')
         return 'bg-green-100 text-green-800 border-green-400';
-    if ($status === 'đang giao')
+    if ($status === 'Đang giao')
         return 'bg-blue-100 text-blue-800 border-blue-400';
-    if ($status === 'đã giao')
+    if ($status === 'Đã giao')
         return 'bg-indigo-100 text-indigo-800 border-indigo-400';
-    if ($status === 'thành công')
+    if ($status === 'Thành công')
         return 'bg-emerald-100 text-emerald-800 border-emerald-400';
-    if ($status === 'đã hủy')
+    if ($status === 'Đã hủy')
         return 'bg-red-100 text-red-800 border-red-400';
     return 'bg-gray-100 text-gray-800 border-gray-400';
 }
@@ -52,7 +51,7 @@ function get_status_classes($status)
         </div>
     </div>
     <div class="overflow-y-scroll flex-1 p-8 pt-0">
-        <div class="overflow-x-auto shadow-xl rounded-xl border border-gray-200">
+        <div class="overflow-x-auto shadow-xl rounded-xl border border-gray-200 mb-10">
             <table class="min-w-full divide-y divide-gray-200 bg-white">
                 <thead class="bg-gray-100 sticky top-0 z-[5]">
                     <tr>
@@ -93,7 +92,7 @@ function get_status_classes($status)
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span id="status-tag-<?= $order['id'] ?>"
                                         class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border <?= get_status_classes($order['status']) ?>">
-                                        <?= ucfirst(htmlspecialchars($order['status'])) ?>
+                                        <?= ucfirst(htmlspecialchars($order['status']))?>
                                     </span>
                                 </td>
 

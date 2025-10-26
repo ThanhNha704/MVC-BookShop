@@ -1,7 +1,5 @@
 <?php
 // views/admin/products/index.php
-
-// Giả định hàm format_currency đã được định nghĩa
 if (!function_exists('format_currency')) {
     function format_currency($amount)
     {
@@ -12,8 +10,6 @@ if (!function_exists('format_currency')) {
 // Lấy dữ liệu sản phẩm. Nếu không có, gán mảng rỗng.
 $listProduct = $data['products'] ?? [];
 // print_r($listProduct);
-// Thiết lập chiều cao cho khu vực cuộn
-$tableMaxHeight = 'max-h-full';
 ?>
 
 <div class="flex-1 bg-white p-6">
@@ -26,15 +22,13 @@ $tableMaxHeight = 'max-h-full';
             <form action="" method="GET" id="searchForm">
                 <input type="hidden" name="controller" value="admin">
                 <input type="hidden" name="action" value="products">
-                <input type="text" 
-                       name="search" 
-                       id="searchInput"
-                       placeholder="Tìm kiếm theo tên sản phẩm..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
-                       value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
-                       autocomplete="off">
+                <input type="text" name="search" id="searchInput" placeholder="Tìm kiếm theo tên sản phẩm..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
+                    value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" autocomplete="off">
             </form>
-            <div id="searchSuggestions" class="absolute w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50 max-h-60 overflow-y-auto"></div>
+            <div id="searchSuggestions"
+                class="absolute w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50 max-h-60 overflow-y-auto">
+            </div>
         </div>
 
         <a href="?controller=admin&action=addProduct"
@@ -43,21 +37,21 @@ $tableMaxHeight = 'max-h-full';
         </a>
     </div>
 
-    <div class="overflow-x-auto overflow-y-auto <?= $tableMaxHeight ?> rounded-lg shadow-lg">
+    <div class="overflow-x-auto overflow-y-auto h-full w-full rounded-lg shadow-lg">
         <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50 sticky top-0 z-10 border-b border-gray-200">
+            <thead class="bg-gray-50 sticky top-0 z-10 border-b border-gray-400">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên Sản
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Tên Sản
                         phẩm</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Giá</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tồn kho
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Giá</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Tồn kho
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Hành động
                     </th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 h-full">
+            <tbody class="bg-white divide-y divide-gray-300 h-full">
                 <?php if (empty($listProduct)): ?>
                     <tr>
                         <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">

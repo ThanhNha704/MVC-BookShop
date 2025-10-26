@@ -3,10 +3,10 @@
 // print_r($data['recentOrders']);
 // Giả định các biến dữ liệu được truyền vào từ Controller
 // Dữ liệu này sẽ được Controller fetch từ database (Model) và truyền vào.
-$totalRevenue = $data['totalRevenue'] ?? 125000000; // Doanh thu tổng
-$totalOrders = $data['totalOrders'] ?? 1560; // Tổng đơn hàng
-$newUsers = $data['newUsers'] ?? 45; // Người dùng mới
-$newReviews = $data['newReviews'] ?? 78; // Đánh giá mới
+$totalRevenue = $data['totalRevenue'] ?? 0; // Doanh thu tổng
+$totalOrders = $data['totalOrders'] ?? 0; // Tổng đơn hàng
+$newUsers = $data['newUsers'] ?? -1; // Người dùng mới
+$newReviews = $data['newReviews'] ?? 0; // Đánh giá mới
 $recentOrders = $data['recentOrders'] ?? [];
 
 // Hàm format tiền tệ
@@ -23,41 +23,43 @@ function format_currency($amount)
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <div class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-amber-500">
+        <a href="?controller=admin&action=revenue"
+            class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-amber-500">
             <div class="flex items-center justify-between">
                 <span class="text-sm font-medium text-gray-500">Tổng Doanh Thu</span>
                 <span class="text-2xl text-amber-500">📈</span>
             </div>
             <p class="text-3xl font-bold text-gray-900 mt-2"><?= format_currency($totalRevenue) ?></p>
             <p class="text-xs text-green-500 mt-1">+12% so với tháng trước</p>
-        </div>
+        </a>
 
-        <div class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-blue-500">
+        <a href="?controller=admin&action=orders" class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-blue-500">
             <div class="flex items-center justify-between">
                 <span class="text-sm font-medium text-gray-500">Tổng Đơn Hàng</span>
                 <span class="text-2xl text-blue-500">📦</span>
             </div>
             <p class="text-3xl font-bold text-gray-900 mt-2"><?= number_format($totalOrders) ?></p>
             <p class="text-xs text-red-500 mt-1">-3% so với tháng trước</p>
-        </div>
+        </a>
 
-        <div class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-green-500">
+        <a href="?controller=admin&action=users" class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-green-500">
             <div class="flex items-center justify-between">
                 <span class="text-sm font-medium text-gray-500">Người Dùng Mới</span>
                 <span class="text-2xl text-green-500">🧑‍🤝‍🧑</span>
             </div>
             <p class="text-3xl font-bold text-gray-900 mt-2"><?= $newUsers ?></p>
             <p class="text-xs text-green-500 mt-1">+25% so với tuần trước</p>
-        </div>
+        </a>
 
-        <div class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-purple-500">
+        <a href="?controller=admin&action=reviews"
+            class="bg-white p-6 rounded-xl shadow-lg border-b-4 border-purple-500">
             <div class="flex items-center justify-between">
                 <span class="text-sm font-medium text-gray-500">Đánh Giá Mới</span>
                 <span class="text-2xl text-purple-500">⭐</span>
             </div>
             <p class="text-3xl font-bold text-gray-900 mt-2"><?= $newReviews ?></p>
             <p class="text-xs text-gray-500 mt-1">Trong 24 giờ qua</p>
-        </div>
+        </a>
 
     </div>
 

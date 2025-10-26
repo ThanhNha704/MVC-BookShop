@@ -2,12 +2,19 @@
 class ProductController extends BaseController
 {
     private $productModel;
+    private $orderModel;
+    private $reviewModel;
 
     public function __construct()
     {
         // Gọi model để lấy dữ liệu sản phẩm hiển thị ở trang chủ
         $this->loadModel('ProductModel');
         $this->productModel = new ProductModel();
+        // Load order & review models for purchase checks and reviews
+        $this->loadModel('OrderModel');
+        $this->orderModel = new OrderModel();
+        $this->loadModel('ReviewModel');
+        $this->reviewModel = new ReviewModel();
     }
     public function index()
     {
@@ -19,7 +26,12 @@ class ProductController extends BaseController
     {
         // Sửa lỗi: Dùng getBookById mới, và dùng $this->view
         $product = $this->productModel->getProductById($id);
-        return $this->view('components/BookDetail', ['book' => $product]);
+        // Prepare reviews and purchase flag
+        $reviews = $this->reviewModel->getReviewsForBook($id);
+        $userId = $_SESSION['user_id'] ?? null;
+        $canReview = $userId ? $this->orderModel->userHasPurchasedBook($userId, $id) : false;
+
+        return $this->view('layouts/products/detail', ['book' => $product, 'reviews' => $reviews, 'canReview' => $canReview]);
     }
 
     // SearchController.php (hoặc method search trong HomeController)
@@ -50,6 +62,10 @@ class ProductController extends BaseController
             return;
         }
 
-        return $this->view('components/BookDetail',  ['book'=>$product]);
+        $reviews = $this->reviewModel->getReviewsForBook($id);
+        $userId = $_SESSION['user_id'] ?? null;
+        $canReview = $userId ? $this->orderModel->userHasPurchasedBook($userId, $id) : false;
+
+        return $this->view('layouts/products/detail', ['book' => $product, 'reviews' => $reviews, 'canReview' => $canReview]);
     }
 }

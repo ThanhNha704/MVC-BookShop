@@ -87,47 +87,6 @@ function getStatusClass($status)
                 </div>
             </div>
         </div>
-
-        <!-- Danh sách địa chỉ -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Địa chỉ giao hàng</h2>
-
-            <?php if (empty($addresses)): ?>
-                <p class="text-gray-500 italic">Người dùng chưa có địa chỉ giao hàng nào.</p>
-            <?php else: ?>
-                <div class="grid grid-cols-1 gap-4">
-                    <?php foreach ($addresses as $address): ?>
-                        <div
-                            class="border rounded-lg p-4 <?= $address['is_default'] ? 'border-amber-500 bg-amber-50' : 'border-gray-200' ?>">
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="flex items-center">
-                                    <span
-                                        class="font-medium text-gray-900"><?= htmlspecialchars($address['recipient_full_name']) ?></span>
-                                    <?php if ($address['is_default']): ?>
-                                        <span class="ml-2 px-2 py-1 text-xs bg-amber-100 text-amber-800 rounded">Mặc định</span>
-                                    <?php endif; ?>
-                                </div>
-                                <span class="text-sm text-gray-500">ID: <?= htmlspecialchars($address['id']) ?></span>
-                            </div>
-
-                            <div class="text-sm text-gray-600">
-                                <p class="mb-1">SĐT: <?= htmlspecialchars($address['phone_number']) ?></p>
-                                <p><?= htmlspecialchars($address['address_line']) ?></p>
-                                <p>
-                                    <?= htmlspecialchars($address['ward']) ?>,
-                                    <?= htmlspecialchars($address['district']) ?>,
-                                    <?= htmlspecialchars($address['city']) ?>
-                                </p>
-                            </div>
-
-                            <div class="mt-2 text-xs text-gray-500">
-                                Cập nhật lần cuối: <?= date('d/m/Y H:i', strtotime($address['updated_at'])) ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
     </div>
 </div>
 </div>

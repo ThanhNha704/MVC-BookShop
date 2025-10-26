@@ -2,8 +2,7 @@
     <p class="w-fit border-b-2 border-amber-500">DANH SÁCH SẢN PHẨM</p>
 </div>
 
-<div
-    class="mx-auto product-list grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 p-3 my-3">
+<div class="mx-auto product-list grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 p-3 my-3">
     <?php
     $listItem = $data['books'];
     foreach ($listItem as $key => $value) {
@@ -11,8 +10,7 @@
         $discountPercent = $value['discount'] ?? 0;
         ?>
 
-        <a href="?controller=product&action=details&id=<?= $value['id'] ?>" 
-        class="relative mx-auto transition ease-in-out duration-300 hover:shadow-2xl shadow-md h-max w-[90%] col-span-2 
+        <a href="?controller=product&action=details&id=<?= $value['id'] ?>" class="relative mx-auto transition ease-in-out duration-300 hover:shadow-2xl shadow-md h-max w-[90%] col-span-2 
             flex flex-1 flex-col justify-center bg-stone-50 p-3 rounded-lg border-1 border-amber-100"
             title="<?= htmlspecialchars($value['title']); ?>">
 

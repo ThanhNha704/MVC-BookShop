@@ -63,11 +63,8 @@ class BaseModel extends Database
         }
         return $data;
     }
-
-    // -------------------------------------------------------------------
-    // Hàm execute_query (Dùng cho INSERT/UPDATE/DELETE)
-    // -------------------------------------------------------------------
-
+    
+    // Thực thi truy vấn và trả về kết quả
     protected function execute_query(string $sql)
     {
         $result = $this->db->query($sql);
@@ -117,7 +114,7 @@ class BaseModel extends Database
     {
         $sql = "SELECT * FROM $table WHERE $column = $id";
 
-        return $this->query($sql);
+        return $this->execute_query($sql);
     }
 
     // Tìm kiếm theo tên
@@ -127,6 +124,6 @@ class BaseModel extends Database
 
         $sql = "SELECT * FROM {$table} WHERE {$column} LIKE '%{$value}%'";
 
-        return $this->query($sql);
+        return $this->execute_query($sql);
     }
 }

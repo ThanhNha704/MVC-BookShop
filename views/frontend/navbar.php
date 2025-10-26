@@ -73,10 +73,9 @@ $userName = $_SESSION['user_name'] ?? '';
                     </p> -->
                     <div
                         class="z-50 group-hover:block hidden absolute left-[100%] top-[50%] bg-white shadow-lg rounded-r-lg rounded-bl-lg pt-2 border-1 border-amber-500">
-                        <div class="flex flex-col gap-2 w-48 py-2 px-4">
+                        <div class="w-max flex flex-col gap-2 w-48 py-2 px-4">
 
-
-                            <a href="?controller=order&action=index" class="text-xl hover:font-medium">
+                            <a href="?controller=orders&action=index" class="text-xl hover:font-medium">
                                 Trạng Thái Đơn Hàng</a>
 
                             <a href="?controller=auth&action=logout" class="text-xl hover:font-medium">
