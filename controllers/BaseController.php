@@ -3,6 +3,7 @@ class BaseController
 {
     protected $data = [];
 
+    // --- Nạp Model ---
     protected function loadModel($modelName)
     {
         $modelPath = './models/' . $modelName . '.php';
@@ -14,38 +15,54 @@ class BaseController
         }
     }
 
-    // Phương thức nạp View
+    // --- Nạp View ---
     protected function view($viewPath, array $data = [], $isAdminLayout = false)
     {
         extract($data);
 
+        // Thư mục gốc chứa tất cả views
         $viewsBaseDir = dirname(__DIR__) . '/views/';
-        $viewFile = $viewsBaseDir . $viewPath . '.php';
-        if ($isAdminLayout) {
-            $layoutFile = $viewsBaseDir . 'admin/';
-            include $layoutFile . '/header.php';
-            include $layoutFile . '/sidebar.php';
-            if (!file_exists($layoutFile . $viewPath . '.php')) {
-                echo $layoutFile . $viewPath . '.php';
-            }
-            include $layoutFile . $viewPath . '.php';
-            echo '</div>';
-            echo '</body>';
-            echo '</html>';
 
-            // include $layoutFile . '/footer.php';
+        if ($isAdminLayout) {
+            // --- ADMIN ---
+            $layoutDir = $viewsBaseDir . 'admin/';
+            $viewFile = $layoutDir . $viewPath . '.php';
+
+            if (!file_exists($viewFile)) {
+                die("Admin view '{$viewFile}' not found.");
+            }
+
+            include $layoutDir . 'header.php';
+            include $layoutDir . 'sidebar.php';
+            include $viewFile;
+            // include $layoutDir . 'footer.php'; // tùy bạn có muốn hay không
+
         } else {
-            $layoutFile = $viewsBaseDir . 'frontend/';
-            include $layoutFile . '/header.php';
-            include $layoutFile . '/navbar.php';
-            include $layoutFile . $viewPath . '.php';
-            include $layoutFile . '/footer.php';
+            // --- FRONTEND ---
+            $layoutDir = $viewsBaseDir . 'frontend/';
+
+            // Nếu $viewPath có chứa 'frontend/', loại bỏ nó để tránh trùng
+            if (strpos($viewPath, 'frontend/') === 0) {
+                $viewPath = str_replace('frontend/', '', $viewPath);
+            }
+
+            $viewFile = $layoutDir . $viewPath . '.php';
+
+            if (!file_exists($viewFile)) {
+                die("Frontend view '{$viewFile}' not found.");
+            }
+
+            include $layoutDir . 'header.php';
+            include $layoutDir . 'navbar.php';
+            include $viewFile;
+            include $layoutDir . 'footer.php';
         }
     }
 
+    // --- Chuyển hướng ---
     protected function redirect($url)
     {
-        echo header("Location: " . $url);
+        header("Location: " . $url);
         exit();
     }
 }
