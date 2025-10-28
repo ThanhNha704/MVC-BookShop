@@ -15,15 +15,15 @@
             <div class="space-y-6">
                 <div>
                     <p class="font-semibold text-lg text-gray-700">📍 Địa Chỉ:</p>
-                    <p class="text-gray-600">123 Đường Sách, Phường Tri Thức, Quận Văn Học, TP.HCM</p>
+                    <p class="text-gray-600">597/14 Quang Trung, phường 11, Gò Vấp, TP HCM.</p>
                 </div>
                 <div>
                     <p class="font-semibold text-lg text-gray-700">📞 Điện Thoại:</p>
-                    <p class="text-gray-600">(+84) 123 456 789</p>
+                    <p class="text-gray-600">0843636561</p>
                 </div>
                 <div>
                     <p class="font-semibold text-lg text-gray-700">📧 Email Hỗ Trợ:</p>
-                    <p class="text-gray-600">support@bookaza.vn</p>
+                    <p class="text-gray-600">baobang21032004@gmail.com</p>
                 </div>
                 <div>
                     <p class="font-semibold text-lg text-gray-700">🕒 Giờ Làm Việc:</p>
