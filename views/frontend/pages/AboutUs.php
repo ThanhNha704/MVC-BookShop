@@ -53,20 +53,8 @@
                 </p>
                 
                 <p class="mb-3 text-gray-800"><span class="font-bold text-amber-600"><i class="fas fa-envelope mr-2"></i>Email:</span> 
-                    <a href="mailto:support@bookaza.vn" class="hover:underline">support@bookaza.vn</a>
+                    <a href="mailto:support@bookaza.vn" class="hover:underline">baobang21032004@gmail.com</a>
                 </p>
-            </div>
-            
-            <div>
-                <h3 class="text-xl font-semibold mb-3 text-gray-800">Gửi phản hồi cho chúng tôi</h3>
-                <form class="space-y-3">
-                    <input type="text" placeholder="Tên của bạn" class="w-full p-2 border border-amber-300 rounded-lg focus:ring-amber-500 focus:border-amber-500">
-                    <input type="email" placeholder="Email liên hệ" class="w-full p-2 border border-amber-300 rounded-lg focus:ring-amber-500 focus:border-amber-500">
-                    <textarea placeholder="Nội dung tin nhắn..." rows="3" class="w-full p-2 border border-amber-300 rounded-lg focus:ring-amber-500 focus:border-amber-500"></textarea>
-                    <button type="submit" class="w-full bg-amber-600 text-white font-bold py-2 rounded-lg hover:bg-amber-700 transition duration-300">
-                        Gửi Tin Nhắn
-                    </button>
-                </form>
             </div>
         </div>
     </section>
