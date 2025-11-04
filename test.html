@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biểu Đồ Doanh Thu Mẫu</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Thiết lập kích thước cho khu vực biểu đồ */
+        .chart-container {
+            width: 80%;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chart-container">
+        <h2 style="text-align: center;">📊 Biểu Đồ Doanh Thu 6 Tháng Gần Nhất</h2>
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu (Bạn có thể thay đổi dữ liệu này)
+        const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
+        const revenueData = [120, 150, 140, 180, 220, 250]; // Đơn vị: Triệu VNĐ
+        const profitData = [30, 45, 40, 50, 65, 80]; // Đơn vị: Triệu VNĐ
+
+        // Lấy thẻ canvas
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+
+        // Khởi tạo biểu đồ
+        new Chart(ctx, {
+            type: 'line', // Loại biểu đồ: Đường (Line)
+
+            data: {
+                labels: labels, // Nhãn cho trục X (Tháng)
+                datasets: [
+                    {
+                        label: 'Doanh Thu (Tr. VNĐ)',
+                        data: revenueData,
+                        borderColor: 'rgb(255, 99, 132)', // Màu đường doanh thu (Đỏ hồng)
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)', // Màu nền dưới đường
+                        tension: 0.4, // Độ cong của đường
+                        fill: true // Tô màu dưới đường
+                    },
+                    {
+                        label: 'Lợi Nhuận (Tr. VNĐ)',
+                        data: profitData,
+                        borderColor: 'rgb(75, 192, 192)', // Màu đường lợi nhuận (Xanh ngọc)
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        tension: 0.4,
+                        fill: false // Không tô màu dưới đường
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'So Sánh Doanh Thu và Lợi Nhuận',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND',
+                                        minimumFractionDigits: 0
+                                    }).format(context.parsed.y * 1000000); // Nhân với 1 triệu để hiển thị đủ
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Giá trị (Triệu VNĐ)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
