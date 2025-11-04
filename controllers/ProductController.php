@@ -1,80 +1,90 @@
 <?php
-class ProductController extends BaseController
+class ProductModel extends BaseModel
 {
-    private $productModel;
-    private $orderModel;
-    private $reviewModel;
+    protected $table = 'books';
 
-    public function __construct()
+    // Giữ đúng kiểu hàm với BaseModel
+    public function getProduct($selectFields = '*', $table = '', $where = '', $orderBy = '', $limit = ''): array
     {
-        // Gọi model để lấy dữ liệu sản phẩm hiển thị ở trang chủ
-        $this->loadModel('ProductModel');
-        $this->productModel = new ProductModel();
-        $this->loadModel('OrderModel');
-        $this->orderModel = new OrderModel();
-        $this->loadModel('ReviewModel');
-        $this->reviewModel = new ReviewModel();
+        // Luôn sử dụng $this->table thay vì $table bên ngoài
+        return parent::getProduct($selectFields, $this->table, $where, $orderBy, $limit);
     }
-    public function index()
+
+    public function getProductByName(string $name): array
     {
-        // Nếu có category trong URL thì lọc theo category
-        if (isset($_GET['category']) && $_GET['category'] !== 'Tất cả') {
-            $category = $_GET['category'];
-            $products = $this->productModel->getProductsByCategory($category);
-        } else {
-            // Mặc định hiện tất cả
-            $products = $this->productModel->getProduct('*', '', '', '', '');
+        $name = $this->db->real_escape_string($name);
+        $sql = "SELECT * FROM {$this->table} WHERE title LIKE '%{$name}%'";
+        $result = $this->execute_query($sql);
+
+        $data = [];
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+        }
+        return $data;
+    }
+
+    public function getProductById(int $id): ?array
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE id = " . (int)$id . " LIMIT 1";
+        $result = $this->execute_query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return null;
+    }
+
+    public function updateProduct($id, $data): bool
+    {
+        $setClause = [];
+        foreach ($data as $key => $value) {
+            $value = $this->db->real_escape_string($value);
+            $setClause[] = "`$key` = '$value'";
         }
 
-        $this->view('layouts/products/index', ['products' => $products]);
+        $sql = "UPDATE {$this->table} SET " . implode(',', $setClause) . " WHERE id = " . (int)$id;
+        return $this->execute_query($sql) ? true : false;
     }
 
-    public function show($id)
+    public function createProduct(array $data): ?int
     {
-        // Sửa lỗi: Dùng getBookById mới, và dùng $this->view
-        $product = $this->productModel->getProductById($id);
-        // Prepare reviews and purchase flag
-        $reviews = $this->reviewModel->getReviewsForBook($id);
-        $userId = $_SESSION['user_id'] ?? null;
-        $canReview = $userId ? $this->orderModel->userHasPurchasedBook($userId, $id) : false;
+        $fields = [];
+        $values = [];
 
-        return $this->view('layouts/products/detail', ['book' => $product, 'reviews' => $reviews, 'canReview' => $canReview]);
-    }
-
-    // SearchController.php
-    public function search()
-    {
-        $keyword = $_GET['keyword'] ?? '';
-        $products = $this->productModel->getProductByName($keyword);
-        $this->view('layouts/products/index', ['products' => $products]);
-    }
-
-
-    public function details()
-    {
-        $id = $_GET['id'] ?? null;
-        if ($id === null) {
-            return;
+        foreach ($data as $key => $value) {
+            $fields[] = "`$key`";
+            $values[] = "'" . $this->db->real_escape_string($value) . "'";
         }
 
-        $product = $this->productModel->getProductById($id);
-
-        if (!$product) {
-            return;
+        $sql = "INSERT INTO {$this->table} (" . implode(',', $fields) . ") VALUES (" . implode(',', $values) . ")";
+        if ($this->execute_query($sql)) {
+            return $this->db->insert_id;
         }
-
-        $reviews = $this->reviewModel->getReviewsForBook($id);
-        $userId = $_SESSION['user_id'] ?? null;
-        if (
-            $this->orderModel->userHasPurchasedBook($userId, $id)
-            && !($this->reviewModel->haveReview($userId, $id))
-        ) {
-            $canReview = true;
-        } else {
-            $canReview = false;
-        }
-        $canDelete = $userId ? $this->reviewModel->haveReview($userId, $id) : false;
-
-        return $this->view('layouts/products/detail', ['book' => $product, 'reviews' => $reviews, 'canReview' => $canReview, 'canDelete' => $canDelete]);
+        return null;
     }
+    public function getProductsByCategory(string $category): array
+{
+    // Nếu category là "Tất cả" thì trả về toàn bộ
+    if ($category === 'Tất cả') {
+        return $this->getProduct('*', '', '', '', '');
+    }
+
+    // Tránh lỗi SQL injection
+    $safeCategory = $this->db->real_escape_string($category);
+
+    // Lọc theo cột 'category' trong bảng books
+    $sql = "SELECT * FROM {$this->table} WHERE category = '$safeCategory' AND is_visible = 1";
+    $result = $this->execute_query($sql);
+
+    $products = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+    }
+
+    return $products;
+}
 }
