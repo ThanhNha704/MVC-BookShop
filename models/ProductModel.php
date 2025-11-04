@@ -9,12 +9,25 @@ class ProductModel extends BaseModel
         return parent::getProduct($selectFields, $this->table, $where, $orderBy, $limit);
     }
 
-    public function getProductByName(string $name): array
-    {
-        // Gọi getByName trong BaseModel (đã được sửa)
-        // Lưu ý: Giá trị $name được xử lý tối thiểu (real_escape_string) trong BaseModel
-        return parent::getByName($this->table, 'title', $name);
+    public function getProductByName(string $keyword): array
+{
+    $keyword = $this->db->real_escape_string($keyword);
+
+    // Tìm theo tên sách hoặc tên tác giả
+    $sql = "SELECT * FROM {$this->table} 
+            WHERE title LIKE '%{$keyword}%' 
+               OR author LIKE '%{$keyword}%'";
+
+    $result = $this->execute_query($sql);
+
+    $data = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
     }
+    return $data;
+}
     public function getProductById(string $id): array
     {
         $productId = (int) $id;
