@@ -7,21 +7,39 @@ if (isset($books) && is_array($books) && !empty($books)) {
     // 1. Logic cho Best Sellers (Lấy 8 sách đầu tiên)
     $bestSellers = array_slice($books, 0, 8);
 
-    // 2. Logic cho Flash Sale (Chọn ngẫu nhiên 1 sách)
-    $randomKey = array_rand($books);
-    $flashSaleBook = $books[$randomKey];
-    $originalPrice = $flashSaleBook['price'] ?? 0;
+    // 2. Logic cho Flash Sale (Cố định 1 sản phẩm theo ID)
+$fixedFlashSaleId = 5; // 🔹 Thay ID này bằng ID sách bạn muốn hiển thị Flash Sale
+$flashSaleBook = null;
 
-    // TÍNH TOÁN: Áp dụng mức giảm cố định 30%
+// Tìm sách có ID tương ứng trong danh sách $books
+foreach ($books as $book) {
+    if ($book['id'] == $fixedFlashSaleId) {
+        $flashSaleBook = $book;
+        break;
+    }
+}
+
+// Nếu tìm thấy sản phẩm hợp lệ, xử lý giảm giá
+if ($flashSaleBook) {
+    $originalPrice = $flashSaleBook['price'] ?? 0;
     $flashSaleBook['sale_price'] = round($originalPrice * (100 - FLASH_SALE_DISCOUNT_PERCENT) / 100);
     $flashSaleBook['old_price'] = $originalPrice;
-
-    // Truyền mức giảm giá cố định này để hiển thị % trong component
     $flashSaleBook['discount'] = FLASH_SALE_DISCOUNT_PERCENT;
 
-    // Tính thời gian kết thúc sale (Ví dụ: 12 giờ)
-    $saleEndTime = time() + (12 * 60 * 60);
-    $saleEndTimeJS = date('Y-m-d\TH:i:sP', $saleEndTime);
+    // Thời gian kết thúc sale (12 giờ)
+    if (!isset($_SESSION)) {
+    session_start();
+}
+
+if (!isset($_SESSION['flashsale_end_time'])) {
+    // Chỉ tạo thời gian kết thúc 1 lần (12 tiếng kể từ lần đầu)
+    $_SESSION['flashsale_end_time'] = time() + (12 * 60 * 60);
+}
+
+// Lấy thời gian kết thúc từ session
+$saleEndTime = $_SESSION['flashsale_end_time'];
+$saleEndTimeJS = date('Y-m-d\TH:i:sP', $saleEndTime);
+}
 
 } else {
     // Khởi tạo các biến mặc định nếu không có dữ liệu
@@ -72,5 +90,13 @@ if (isset($books) && is_array($books) && !empty($books)) {
         require __DIR__ . '/../../components/BestSeller.php';
     }
     ?>
+    <?php if (strtotime($saleEndTimeJS) > time()): ?>
+    <!-- Hiển thị flash sale bình thường -->
+<?php else: ?>
+    <div class="text-center py-10 bg-gray-100 rounded-xl shadow-md">
+        <h2 class="text-3xl font-bold text-gray-600">🎉 FLASH SALE ĐÃ KẾT THÚC</h2>
+        <p class="text-gray-500 mt-3">Vui lòng quay lại sau để xem ưu đãi tiếp theo!</p>
+    </div>
+<?php endif; ?>
 
 </main>
