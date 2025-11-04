@@ -17,8 +17,16 @@ class ProductController extends BaseController
     }
     public function index()
     {
-        $products = $this->productModel->getProduct('*', 'books', 'is_visible = 1');
-        return $this->view('layouts/products/index', ['books' => $products]);
+        // Nếu có category trong URL thì lọc theo category
+        if (isset($_GET['category']) && $_GET['category'] !== 'Tất cả') {
+            $category = $_GET['category'];
+            $products = $this->productModel->getProductsByCategory($category);
+        } else {
+            // Mặc định hiện tất cả
+            $products = $this->productModel->getProduct('*', '', '', '', '');
+        }
+
+        $this->view('layouts/products/index', ['products' => $products]);
     }
 
     public function show($id)
@@ -36,14 +44,11 @@ class ProductController extends BaseController
     // SearchController.php
     public function search()
     {
-        $keyword = $_GET['q'] ?? '';
-        $keyword = htmlspecialchars(trim($keyword));
-
-        // 2. Gọi Model để tìm kiếm (dùng phương thức getByName đã sửa trong Model)
-        $results = $this->productModel->getProductByName($keyword);
-
-        return $this->view('layouts/products/index', ['books' => $results]);
+        $keyword = $_GET['keyword'] ?? '';
+        $products = $this->productModel->getProductByName($keyword);
+        $this->view('layouts/products/index', ['products' => $products]);
     }
+
 
     public function details()
     {
