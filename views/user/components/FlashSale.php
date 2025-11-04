@@ -23,9 +23,10 @@ $bookId = $flashSaleBook['id'];
         <div class="md:col-span-2 p-6 flex flex-col md:flex-row items-center gap-6">
             
             <a href="index.php?controller=product&action=details&id=<?= $bookId ?>" class="flex-shrink-0">
-                <img src="<?= $flashSaleBook['image'] ?? './public/products/placeholder.jpg' ?>" 
-                     alt="<?= htmlspecialchars($flashSaleBook['title']) ?>" 
-                     class="w-32 h-48 object-cover rounded-lg shadow-xl border-4 border-white transform hover:scale-105 transition duration-300">
+                <img src="<?= BASE_URL . 'public/products/' . htmlspecialchars($flashSaleBook['image']) ?>" 
+     alt="<?= htmlspecialchars($flashSaleBook['title']) ?>" 
+     class="w-32 h-48 object-cover rounded-lg shadow-xl border-4 border-white transform hover:scale-105 transition duration-300"
+     onerror="this.src='<?= BASE_URL . 'public/products/placeholder.jpg' ?>'">
             </a>
 
             <div class="flex-grow space-y-3 text-center md:text-left">
