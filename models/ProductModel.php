@@ -119,4 +119,15 @@ class ProductModel extends BaseModel
             return null;
         }
     }
+    public function getProductsByCategory($category)
+{
+    // Nếu chọn "Tất cả" thì trả về toàn bộ sản phẩm
+    if ($category === 'Tất cả') {
+        return $this->getProduct('*', 'books');
+    }
+
+    // Lọc sản phẩm theo thể loại (category)
+    $where = "category = '" . $this->db->real_escape_string($category) . "'";
+    return $this->getProduct('*', 'books', $where);
+}
 }
